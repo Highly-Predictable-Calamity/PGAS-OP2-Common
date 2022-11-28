@@ -569,6 +569,9 @@ void op_halo_create() {
                                  comm_size);
             // I think the local_index value is set to the local index of the data in that partition
             // so local is local to the "to set", not the current partition
+	    /* The get_partition returns the MPI rank it belongs to. If it is different from our rank, then we know it is an
+	       export sort of partition
+	    */
 
             if (s_i >= cap_s) {
               cap_s = cap_s * 2;
@@ -680,6 +683,7 @@ void op_halo_create() {
       MPI_Isend(sbuf[i], map->dim * e_list->sizes[i], MPI_INT, e_list->ranks[i],
                 m, OP_MPI_WORLD, &request_send[i]);  // then we actually send the stuff off
     }
+ 
 
     // prepare space for the incomming mapping tables - realloc each
     // mapping tables in each mpi process
@@ -763,6 +767,10 @@ void op_halo_create() {
                                           exec_set_list->sizes[rank] - 1);
               }
 
+	      /* In order to minimise latency, we receive the order of execution of inh (import-non-execute,
+		 so the read-only values used with our calculations) nodes, so we know in which order to
+		 wait for them should we need them (to optimise waiting times)
+	      */
               if (found < 0) {
                 // not in this partition and not found in
                 // exec list
