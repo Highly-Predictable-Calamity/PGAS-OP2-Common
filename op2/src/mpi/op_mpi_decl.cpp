@@ -43,6 +43,11 @@
 #include <op_rt_support.h>
 #include <op_util.h>
 
+#ifdef HAVE_GPI
+#include <GASPI.h>
+#include <cassert>
+#endif
+
 //
 // MPI Communicator for halo creation and exchange
 //
@@ -68,6 +73,31 @@ void op_init(int argc, char **argv, int diags) {
   }
   OP_MPI_WORLD = MPI_COMM_WORLD;
   OP_MPI_GLOBAL = MPI_COMM_WORLD;
+#ifdef HAVE_GPI
+	gaspi_rank_t gpi_rank, procnum;
+	printf("Before  GASPI_PROC_INIT/n");
+	gaspi_return_t ret = gaspi_proc_init(GASPI_BLOCK);
+	printf("After  GASPI_PROC_INIT/n");
+	int mpi_ret, mpi_sz, mpi_rank;
+	mpi_ret = MPI_Comm_size (MPI_COMM_WORLD, &mpi_sz);
+  assert (mpi_ret == 0);
+
+  mpi_ret = MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);
+  assert (mpi_ret == 0);
+	
+	if( ret == GASPI_SUCCESS ) {
+		printf("Gaspi exists");
+		ret = gaspi_proc_num( &procnum );
+		if(ret == GASPI_SUCCESS ) {
+			ret = gaspi_proc_rank( &gpi_rank );
+			if (ret == GASPI_SUCCESS) {
+				printf("Hello from mpi:%d gpi:%d of mpi:%d gpi:%d!\n", mpi_rank,gpi_rank, mpi_sz,procnum);
+			}
+		}
+	} else {
+		printf("Gaspi failed but compiled");
+	}
+#endif
   op_init_core(argc, argv, diags);
 }
 

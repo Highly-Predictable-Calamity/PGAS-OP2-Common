@@ -200,7 +200,7 @@ $(OBJ)/openmp4/%.o: src/openmp4/%.cpp | $(OBJ)
 
 # Will likely need revisiting after merging folder structure
 $(OBJ)/mpi/%.o: src/mpi/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
 
 $(OBJ)/mpi/%.o: src/mpi/%.cu | $(OBJ)
 	$(NVCC) $(NVCCFLAGS) $(INC) -c $< -o $@

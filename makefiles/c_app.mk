@@ -138,7 +138,7 @@ $$(APP_NAME)_$(1): .generated
 	$$(CXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$($(call UPPERCASE,$(1))_SRC) $$(OP2_LIB_$(3)) -o $$@
 
 $$(APP_NAME)_mpi_$(1): .generated
-	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) $$(OP2_LIB_$(4)) -o $$@
+	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(GPI_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) $$(OP2_LIB_$(4)) $$(GPI_LIB) -o $$@
 endef
 
 # the same as RULE_template_base but it first strips its arguments of extra space

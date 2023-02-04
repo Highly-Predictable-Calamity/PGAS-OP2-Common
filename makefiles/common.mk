@@ -86,7 +86,7 @@ ifeq ($(MAKECMDGOALS),config)
     $(call info_bold,> MPI C/C++ compilers $(TEXT_FOUND) ($(CONFIG_MPICXX)); \
       looking for GPI$(COMMA) HDF5 (parallel)$(COMMA) PT-Scotch and ParMETIS)
 
-		include $(DEPS_DIR)/gpi.mk
+    include $(DEPS_DIR)/gpi.mk
 
     include $(DEPS_DIR)/hdf5_par.mk
 
