@@ -1614,13 +1614,14 @@ extern "C"
       halo_list exp_nonexec_list = OP_export_nonexec_list[dat->set->index];
 
 
-      /* allocate the remote segment offsets arrays for the import lists */
-      exp_exec_list->remote_segment_offsets = (gaspi_offset_t*)xmalloc(sizeof(gaspi_offset_t)*exp_exec_list->ranks_size);
-      exp_nonexec_list->remote_segment_offsets = (gaspi_offset_t*)xmalloc(sizeof(gaspi_offset_t)*exp_nonexec_list->ranks_size);
 
 
       /* Allocate gpi buffer */
       op_gpi_buffer gpi_buf = (op_gpi_buffer)xmalloc(sizeof(op_gpi_buffer_core));
+      
+      /* allocate the remote segment offsets arrays for the import lists */
+      gpi_buf->remote_exec_offsets = (gaspi_offset_t*)xmalloc(sizeof(gaspi_offset_t)*exp_exec_list->ranks_size);
+      gpi_buf->remote_nonexec_offsets = (gaspi_offset_t*)xmalloc(sizeof(gaspi_offset_t)*exp_nonexec_list->ranks_size);
 
 
       /* Update the dat to state where the dat data starts within the segment
@@ -1738,7 +1739,7 @@ extern "C"
             dat->index,
             OP_MPI_WORLD,
             &gpi_buf->pre_exchange_hndl_s[i])==MPI_SUCCESS;
-        printf("Dat: %s: Process %d sending segment receive offset %ld from %d for exp_exec_list\n", dat->name, my_rank, recv_obj->segment_recv_offset, imp_exec_list->ranks[i]);
+        //printf("Dat: %s: Process %d sending segment receive offset %ld to %d for exp_exec_list\n", dat->name, my_rank, recv_obj->segment_recv_offset, imp_exec_list->ranks[i]);
       }
 
       /* Non-execute elements */
@@ -1778,18 +1779,8 @@ extern "C"
       // {
       //   recv_okay = recv_okay &
       //     MPI_Irecv(&(exp_exec_list->remote_segment_offsets[i]),
-      //             1,
-      //             MPI_LONG,
-      //             exp_exec_list->ranks[i],
-      //             dat->index,
-      //             OP_MPI_WORLD,
-      //             &gpi_buf->pre_exchange_hndl_r[i])==MPI_SUCCESS;
-      // }
-
-      // /* Non-execute elements */
-      // for (int i = 0; i < exp_nonexec_list->ranks_size; i++)
-      // {
-      //   recv_okay = recv_okay &
+      //             1,printf("Dat: %s: Rank %d export remote info\n",dat->name,my_rank);
+  
       //     MPI_Irecv(&(exp_nonexec_list->remote_segment_offsets[i]),
       //             1,
       //             MPI_LONG,
@@ -1803,25 +1794,31 @@ extern "C"
       // }
 
 
+
+    // for (int i = 0; i < exp_exec_list->ranks_size; i++) {
+    //     printf("i: %d, other rank: %d, receive_offset: %ld\n", i, exp_exec_list->ranks[i], exp_exec_list->remote_segment_offsets[i]);
+    //   }
+    //   fflush(stdout);
+
       /* RECEIVE - BLOCKING */
       bool recv_okay = true;
       for (int i = 0; i < exp_exec_list->ranks_size; i++)
       {
         recv_okay = recv_okay &
-          MPI_Recv(&(exp_exec_list->remote_segment_offsets[i]),
+          MPI_Recv(&(gpi_buf->remote_exec_offsets[i]),
                   1,
                   MPI_UNSIGNED_LONG,
                   exp_exec_list->ranks[i],
                   dat->index,
                   OP_MPI_WORLD,
                   MPI_STATUS_IGNORE)==MPI_SUCCESS;
-        printf("Dat: %s: Process %d received remote segment offset %ld from %d for exp_exec_list\n", dat->name, my_rank, exp_exec_list->remote_segment_offsets[i], exp_exec_list->ranks[i]);
+        //printf("Dat: %s: Process %d received remote segment offset %ld from %d for exp_exec_list and written to address %p\n", dat->name, my_rank, gpi_buf->remote_exec_offsets[i], exp_exec_list->ranks[i],&(gpi_buf->remote_exec_offsets[i]));
       }
       for (int i = 0; i < exp_nonexec_list->ranks_size; i++)
       {
         // printf("Process %d attempting to receive remote segment offset %d for exp_nonexec_list\n",my_rank,i);
         recv_okay = recv_okay &
-          MPI_Recv(&(exp_nonexec_list->remote_segment_offsets[i]),
+          MPI_Recv(&(gpi_buf->remote_nonexec_offsets[i]),
                   1,
                   MPI_UNSIGNED_LONG,
                   exp_nonexec_list->ranks[i],
@@ -1834,7 +1831,23 @@ extern "C"
       }
 
       // printf("Process %d finished receive of dat: %s!\n",my_rank,dat->name);
+      
+      
+    }
+
+    fflush(stdout);
+
+    TAILQ_FOREACH(item, &OP_dat_list, entries){
+      
+      op_dat dat = item->dat;
+      op_gpi_buffer gpi_buf = (op_gpi_buffer) dat->gpi_buffer;
+
+      halo_list exp_exec_list = OP_export_exec_list[dat->set->index];
+      for (int i = 0; i < exp_exec_list->ranks_size; i++) {
+        printf("Dat: %7s: Rank %1d export remote info --- other rank: %1d, receive_offset: %7ld at recv offset addr %p export exec list ptr %p\n",dat->name,my_rank, exp_exec_list->ranks[i], gpi_buf->remote_exec_offsets[i],&(gpi_buf->remote_exec_offsets[i]),exp_exec_list);
+      }
       fflush(stdout);
+      
     }
 
     // printf("Rank %d: Pre-exchange complete\n", my_rank);
