@@ -63,6 +63,7 @@ double gam, gm1, cfl, eps, mach, alpha, qinf[4];
 
 #include "op_lib_mpi.h"
 #include "op_seq.h"
+#include "op_gpi_performance.h"
 
 //
 // kernel routines for parallel loops
@@ -478,8 +479,8 @@ int main(int argc, char **argv) {
   double *q_part = (double *)op_malloc(sizeof(double) * op_get_size(cells) * 4);
   op_fetch_data_idx(p_q, q_part, 0, op_get_size(cells) - 1);
   free(q_part);
-
-  op_timing_output();
+  printf("\nairfoil_mpi.cpp\n");
+  op_gpi_timing_output();
   op_printf("Max total runtime = %f\n", wall_t2 - wall_t1);
 
   op_exit();
