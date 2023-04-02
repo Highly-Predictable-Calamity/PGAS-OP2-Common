@@ -170,6 +170,12 @@ OP2_GPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
 	gpi/op_gpi_rt_support.o \
 	gpi/op_gpi_util.o \
 	gpi/op_gpi_performance.o \
+	gpi/op_mpi_core.o \
+	gpi/op_mpi_part_core.o \
+	gpi/op_mpi_decl.o \
+	gpi/op_mpi_rt_support.o \
+	gpi/op_mpi_hdf5.o \
+	gpi/op_mpi_util.o \
 	common/op_perf_common+gpi.o \
 	externlib/op_util.o \
 	externlib/op_renumber.o)
@@ -213,7 +219,7 @@ $(OBJ)/openmp4/%.o: src/openmp4/%.cpp | $(OBJ)
 # Will likely need revisiting after merging folder structure
 # TODO validate
 $(OBJ)/mpi/%.o: src/mpi/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -UHAVE_GPI -c $< -o $@ 
 
 $(OBJ)/mpi/%.o: src/mpi/%.cu | $(OBJ)
 	$(NVCC) $(NVCCFLAGS) $(INC) -c $< -o $@
@@ -223,7 +229,10 @@ $(OBJ)/fortran/%+mpi.o: src/fortran/%.c | $(OBJ)
 
 # TODO validate
 # TEMPORARILY INCLUDES MPI SRC UNTIL GPI/COMMON SOURCE READY
-$(OBJ)/gpi/%.o: src/common/%.cpp src/gpi/%.cpp src/mpi/%.cpp | $(OBJ)
+$(OBJ)/gpi/%.o: src/gpi/%.cpp | $(OBJ)
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
+
+$(OBJ)/gpi/%.o: src/mpi/%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
 
 $(OBJ)/common/%+mpi.o: src/common/%.cpp | $(OBJ)
@@ -255,10 +264,10 @@ $(OBJ)/fortran/%+cuda.o: src/fortran/%.F90 $(OBJ)/fortran/op2_for_declarations+c
 
 # Catch-all rules
 $(OBJ)/%.o: src/%.cpp | $(OBJ)
-	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INC) -UHAVE_GPI -c $< -o $@
 
 $(OBJ)/%.o: src/%.c | $(OBJ)
-	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(INC) -UHAVE_GPI -c $< -o $@
 
 # Include auto-generated dependencies for C/CXX sources (if they exist)
 ifneq ($(wildcard $(OBJ)),)
