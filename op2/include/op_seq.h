@@ -6,6 +6,7 @@
 
 #include "op_lib_cpp.h"
 #include <utility>
+#include <op_perf_common.h>
 
 #ifdef HAVE_GPI
 #include "op_lib_core.h"
@@ -173,19 +174,10 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
   // update timer record
   op_timers_core(&cpu_t2, &wall_t2);
 #ifdef COMM_PERF
-#ifdef HAVE_GPI
-  void *k_i = op_gpi_perf_time(name, wall_t2 - wall_t1);
-  op_gpi_perf_comms(k_i, 20, args);
+  void *k_i = op_comm_perf_time(name, wall_t2 - wall_t1);
+  op_comm_perf_comms(k_i, 20, args);
 #else
-  void *k_i = op_mpi_perf_time(name, wall_t2 - wall_t1);
-  op_mpi_perf_comms(k_i, 20, args);
-#endif /*HAVE_GPI*/
-#else
-#ifdef HAVE_GPI
-  op_gpi_perf_time(name, wall_t2 - wall_t1);
-#else
-  op_mpi_perf_time(name, wall_t2 - wall_t1);
-#endif /* HAVE_GPI*/
+  op_comm_perf_time(name, wall_t2 - wall_t1);
 #endif /* COMM_PERF*/
 
   //LOCKSTEP(rank, "After gpi perf comms\n");
