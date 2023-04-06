@@ -186,7 +186,8 @@ void op_gpi_reduce_combined(op_arg *args, int nargs){
   gaspi_queue_id_t queue = 1;
   gaspi_group_t group = GASPI_GROUP_ALL;
   gaspi_timeout_t timeout = GASPI_BLOCK;
-  
+
+	op_timers_core(&c1, &t1);
   GPI_allgather(
     local_segment, 
     local_offset, 
@@ -197,6 +198,8 @@ void op_gpi_reduce_combined(op_arg *args, int nargs){
     group, 
     timeout 
   );
+	op_timers_core(&c2, &t2);
+	op_comm_perf_time("GPI_allgather", t2-t1);
   //printf("hello\n");
   //fflush(stdout);
 
@@ -407,6 +410,7 @@ void op_gpi_reduce_float(op_arg *arg, float *data){
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
     if (arg->acc == OP_WRITE){
+			op_timers_core(&c1, &t1);
       GPI_allgather(
         local_segment, 
         local_offset, 
@@ -417,6 +421,8 @@ void op_gpi_reduce_float(op_arg *arg, float *data){
         group, 
         timeout 
       );
+			op_timers_core(&c2, &t2);
+			op_comm_perf_time("GPI_allgather", t2-t1);
 
       float* result = receive;
 
@@ -487,6 +493,7 @@ void op_gpi_reduce_double(op_arg *arg, double *data){
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
     if (arg->acc == OP_WRITE){
+			op_timers_core(&c1, &t1);
       GPI_allgather(
         local_segment, 
         local_offset, 
@@ -497,6 +504,8 @@ void op_gpi_reduce_double(op_arg *arg, double *data){
         group, 
         timeout 
       );
+			op_timers_core(&c2, &t2);
+			op_comm_perf_time("GPI_allgather", t2-t1);
 
       double* result = receive;
 
@@ -567,6 +576,7 @@ void op_gpi_reduce_int(op_arg *arg, int *data){
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
     if (arg->acc == OP_WRITE){
+			op_timers_core(&c1, &t1);
       GPI_allgather(
         local_segment, 
         local_offset, 
@@ -577,6 +587,8 @@ void op_gpi_reduce_int(op_arg *arg, int *data){
         group, 
         timeout 
       );
+			op_timers_core(&c2, &t2);
+			op_comm_perf_time("GPI_allgather", t2-t1);
 
       int* result = receive;
 
@@ -647,6 +659,7 @@ void op_gpi_reduce_bool(op_arg *arg, bool *data){
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
     if (arg->acc == OP_WRITE){
+			op_timers_core(&c1, &t1);
       GPI_allgather(
         local_segment, 
         local_offset, 
@@ -657,6 +670,8 @@ void op_gpi_reduce_bool(op_arg *arg, bool *data){
         group, 
         timeout 
       );
+			op_timers_core(&c2, &t2);
+			op_comm_perf_time("GPI_allgather", t2-t1);
 
       bool* result = receive;
 
