@@ -70,9 +70,11 @@ inline void op_args_check(op_set set, int nargs, op_arg *args, int *ninds,
 template <typename... T, typename... OPARG, size_t... I>
 void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
                       op_set set, OPARG... arguments) {
-  
+
+#ifdef HAVE_GPI
   gaspi_rank_t rank;
   gaspi_proc_rank(&rank);
+#endif
   //if(rank==0)
   //  printf("----------Starting %s op_par_loop iteration----------\n\n\n\n",name);
   

@@ -57,11 +57,9 @@ clean:
 	-rm -rf $(MOD)
 
 # Base set of objects shared across multiple libraries
-OP2_BASE := $(addprefix $(OBJ)/,\
-	core/op_lib_core.o \
-	externlib/op_util.o \
-	common/op_perf_common.o \
-	core/op_rt_support.o)
+OP2_BASE := $(addprefix $(OBJ)/core/,\
+	op_lib_core.o \
+	op_rt_support.o)
 
 OP2_FOR_BASE := $(addprefix $(OBJ)/fortran/,\
 	op2_for_declarations.o \
@@ -190,10 +188,6 @@ $(OBJ)/cuda/%.o: src/cuda/%.cpp | $(OBJ)
 
 $(OBJ)/openmp4/%.o: src/openmp4/%.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OMP_OFFLOAD_CXXFLAGS) $(INC) -c $< -o $@
-
-# Common folder for SEQ non-mpi/gpi version
-$(OBJ)/common/%.o: src/common/%.cpp | $(OBJ)
-	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
 
 $(OBJ)/mpi/%.o: src/mpi/%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@

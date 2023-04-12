@@ -370,7 +370,7 @@ int main(int argc, char **argv) {
   // initialise timers for total execution wall time
   op_timers(&cpu_t1, &wall_t1);
 
-  niter = 10;
+  niter = 1000;
   for (int iter = 1; iter <= niter; iter++) {
 
     // save old flow solution
@@ -431,13 +431,13 @@ int main(int argc, char **argv) {
     // print iteration history
     rms = sqrt(rms / (double)g_ncell);
     if (iter % 100 == 0){
-      if(isnan(rms) || rms==0)
-        GPI_FAIL("Nan rms\n");
+      /*if(isnan(rms) || rms==0)
+        GPI_FAIL("Nan rms\n");*/
       
       op_printf(" %d  %10.5e \n", iter, rms);
-      if(isnan(rms)){
+      /*if(isnan(rms)){
         GPI_FAIL("NAN Output - aborting now...\n");
-      } 
+				} */
     }
 
     if (iter % 1000 == 0){
@@ -480,7 +480,7 @@ int main(int argc, char **argv) {
   op_fetch_data_idx(p_q, q_part, 0, op_get_size(cells) - 1);
   free(q_part);
   printf("\nairfoil_mpi.cpp\n");
-  op_gpi_timing_output();
+  //op_gpi_timing_output();
   op_printf("Max total runtime = %f\n", wall_t2 - wall_t1);
 
   op_exit();

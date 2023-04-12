@@ -55,8 +55,10 @@
 MPI_Comm OP_MPI_WORLD;
 MPI_Comm OP_MPI_GLOBAL;
 
+#ifdef HAVE_GPI
 gaspi_group_t OP_GPI_WORLD;
 gaspi_group_t OP_GPI_GLOBAL;
+#endif
 
 /*
  * Routines called by user code and kernels
