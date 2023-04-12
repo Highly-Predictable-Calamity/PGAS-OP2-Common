@@ -63,6 +63,7 @@ double gam, gm1, cfl, eps, mach, alpha, qinf[4];
 
 #include "op_lib_mpi.h"
 #include "op_seq.h"
+#include "op_gpi_performance.h"
 
 //
 // kernel routines for parallel loops
@@ -355,15 +356,21 @@ int main(int argc, char **argv) {
   op_decl_const(4, "double", qinf);
 
   op_diagnostic_output();
+  
+  printf("before partition!\n");
+  fflush(stdout);
 
   // trigger partitioning and halo creation routines
   op_partition("PTSCOTCH", "KWAY", cells, pecell, p_x);
   // op_partition("PARMETIS", "KWAY", cells, pecell, p_x);
+  printf("after partition!\n");
+
+  fflush(stdout);
 
   // initialise timers for total execution wall time
   op_timers(&cpu_t1, &wall_t1);
 
-  niter = 1000;
+  niter = 10;
   for (int iter = 1; iter <= niter; iter++) {
 
     // save old flow solution
@@ -383,6 +390,8 @@ int main(int argc, char **argv) {
                   op_arg_dat(p_x, 3, pcell, 2, "double", OP_READ),
                   op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_READ),
                   op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_WRITE));
+
+      //LOCKSTEP(my_rank, "Res after adt: %d \n", rms)
 
       //    calculate flux residual
       op_par_loop(res_calc, "res_calc", edges,
@@ -413,24 +422,47 @@ int main(int argc, char **argv) {
                   op_arg_dat(p_res, -1, OP_ID, 4, "double", OP_RW),
                   op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_READ),
                   op_arg_gbl(&rms, 1, "double", OP_INC));
+      
+      //LOCKSTEP(my_rank, "--------- Res %d after update loop: %f------------- \n", iter, rms)
+    
+      //GPI_FAIL("stop  plz\n");
     }
 
     // print iteration history
     rms = sqrt(rms / (double)g_ncell);
-    if (iter % 100 == 0)
+    if (iter % 100 == 0){
+      if(isnan(rms) || rms==0)
+        GPI_FAIL("Nan rms\n");
+      
       op_printf(" %d  %10.5e \n", iter, rms);
+      if(isnan(rms)){
+        GPI_FAIL("NAN Output - aborting now...\n");
+      } 
+    }
 
-    if (iter % 1000 == 0 &&
-        g_ncell == 720000) { // defailt mesh -- for validation testing
-      // op_printf(" %d  %3.16f \n",iter,rms);
-      double diff = fabs((100.0 * (rms / 0.0001060114637578)) - 100.0);
-      op_printf("\n\nTest problem with %d cells is within %3.15E %% of the "
-                "expected solution\n",
-                720000, diff);
-      if (diff < 0.00001) {
-        op_printf("This test is considered PASSED\n");
-      } else {
-        op_printf("This test is considered FAILED\n");
+    if (iter % 1000 == 0){
+      op_printf("rms at iter %d = %3.12e", iter, rms);
+      double expected = -1;
+      if (g_ncell == 2880000){
+        expected = 0.0001215707904481;
+      }else if (g_ncell == 720000){
+        expected = 0.0001060114637578; 
+      }else if (g_ncell == 4200000){
+        expected = 0.0001220712679165;
+      }
+      if (expected==-1){
+        printf("\n\nProblem with %d cells has no expected solution\n", g_ncell);
+      }else{
+        double diff = fabs((100.0 * (rms / expected)) - 100.0);
+        op_printf("\n\nTest problem with %d cells is within %3.15E %% of the "
+                  "expected solution\n",
+                  g_ncell, diff);
+
+        if (diff < 0.00001) {
+          op_printf("This test is considered PASSED\n");
+        } else {
+          op_printf("This test is considered FAILED\n");
+        }
       }
     }
   }
@@ -447,8 +479,8 @@ int main(int argc, char **argv) {
   double *q_part = (double *)op_malloc(sizeof(double) * op_get_size(cells) * 4);
   op_fetch_data_idx(p_q, q_part, 0, op_get_size(cells) - 1);
   free(q_part);
-
-  op_timing_output();
+  printf("\nairfoil_mpi.cpp\n");
+  op_gpi_timing_output();
   op_printf("Max total runtime = %f\n", wall_t2 - wall_t1);
 
   op_exit();

@@ -54,8 +54,7 @@ ifneq ($(and $(wildcard ./$(APP_ENTRY_GPI)),$(HAVE_GPI)),)
   BUILDABLE_VARIANTS += $(foreach variant,$(BASE_BUILDABLE_VARIANTS),$(APP_NAME)_gpi_$(variant))
 
   # Excluding the unsupported ones
-	BUILDABLE_VARIANTS :=  $(filter-out %_gpi_genseq,$(BUILDABLE_VARIANTS))
-	BUILDABLE_VARIANTS :=  $(filter-out %_gpi_vec,$(BUILDABLE_VARIANTS))
+  BUILDABLE_VARIANTS :=  $(filter-out %_gpi_vec,$(BUILDABLE_VARIANTS))
   BUILDABLE_VARIANTS :=  $(filter-out %_gpi_openmp,$(BUILDABLE_VARIANTS))
   BUILDABLE_VARIANTS :=  $(filter-out %_gpi_openmp4,$(BUILDABLE_VARIANTS))
   BUILDABLE_VARIANTS :=  $(filter-out %_gpi_cuda,$(BUILDABLE_VARIANTS))
@@ -146,6 +145,9 @@ $$(APP_NAME)_$(1): .generated
 
 $$(APP_NAME)_mpi_$(1): .generated
 	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) $$(OP2_LIB_$(4)) -o $$@
+
+$$(APP_NAME)_gpi_$(1): .generated
+	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(GPI_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) -L/dcs/19/u1906046/Documents/project/PGAS-OP2-Common/op2/lib -lop2_gpi  -L/usr/local//lib -lparmetis -lmetis  $$(GPI_LIB)  -o $$@
 endef
 
 # the same as RULE_template_base but it first strips its arguments of extra space
@@ -160,6 +162,7 @@ $(eval $(call RULE_template, openmp,   $(OMP_CPPFLAGS),                         
 $(eval $(call RULE_template, openmp4,  $(OMP_OFFLOAD_CPPFLAGS) -DOP2_WITH_OMP4, OPENMP4,    ))
 $(eval $(call RULE_template, cuda,,                                             CUDA,    MPI_CUDA))
 $(eval $(call RULE_template, cuda_hyb, $(OMP_CPPFLAGS),                         CUDA,    MPI_CUDA))
+#$(eval $(call RULE_template, gpi,,                                              SEQ,     GPI))
 
 $(APP_NAME)_cuda: cuda/$(APP_NAME)_kernels.o
 $(APP_NAME)_mpi_cuda: cuda/$(APP_NAME)_mpi_kernels.o

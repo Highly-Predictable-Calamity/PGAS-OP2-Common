@@ -22,6 +22,8 @@ c_cpp_properties.json
 launch.json
 .vscode/
 
+.build_env.sh
+
 # Emacs temporary files
 *#*#*
 
@@ -30,6 +32,4 @@ launch.json
 
 # Make artifacts
 op2/log.txt
-
-.build_env.sh
 

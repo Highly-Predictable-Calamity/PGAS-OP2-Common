@@ -6,6 +6,14 @@
 
 #include "op_lib_cpp.h"
 #include <utility>
+#include <op_perf_common.h>
+
+#ifdef HAVE_GPI
+#include "op_lib_core.h"
+#include "op_gpi_core.h"
+#endif
+
+#include <time.h>
 
 static int op2_stride = 1;
 #define OP2_STRIDE(arr, idx) arr[idx]
@@ -63,6 +71,14 @@ template <typename... T, typename... OPARG, size_t... I>
 void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
                       op_set set, OPARG... arguments) {
   
+  gaspi_rank_t rank;
+  gaspi_proc_rank(&rank);
+  //if(rank==0)
+  //  printf("----------Starting %s op_par_loop iteration----------\n\n\n\n",name);
+  
+
+
+
   //N is the number of arguments
   constexpr int N = sizeof...(OPARG);
 
@@ -95,14 +111,30 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
   double cpu_t1, cpu_t2, wall_t1, wall_t2;
   op_timers_core(&cpu_t1, &wall_t1);
 
+  //LOCKSTEP(rank, "before halo exchange\n");
+
   // MPI halo exchange and dirty bit setting, if needed
+#ifdef HAVE_GPI
+  int n_upper = op_gpi_halo_exchanges(set, N, args);
+#else
   int n_upper = op_mpi_halo_exchanges(set, N, args);
+#endif
+
+  //LOCKSTEP(rank, "after halo exchange\n");
+
   // loop over set elements
   int halo = 0;
 
   for (int n = 0; n < n_upper; n++) {
-    if (n == set->core_size)
+    if (n == set->core_size){
+      //LOCKSTEP(rank, "before waitall 20 arg\ns")
+#ifdef HAVE_GPI
+      op_gpi_waitall_args(20, args);
+#else
       op_mpi_wait_all(20, args);
+#endif
+      //LOCKSTEP(rank, "after waitall 20 args\n")
+    } 
     if (n == set->size)
       halo = 1;
     (void)std::initializer_list<int>{
@@ -110,27 +142,50 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
                             : (op_arg_set(n, arguments, &p_a[I], halo), 0))...};
     kernel(((T *)p_a[I])...);
   }
+
+  //LOCKSTEP(rank, "before waitall args N\n")
+
   if (n_upper == set->core_size || n_upper == 0)
+#ifdef HAVE_GPI
+    op_gpi_waitall_args(N, args);
+#else
     op_mpi_wait_all(N, args);
+#endif
+  
+  //LOCKSTEP(rank, "after waitall args N\n")
 
   // set dirty bit on datasets touched
-  op_mpi_set_dirtybit(N, args);
+  op_mpi_set_dirtybit(N, args); /* This IS_COMMON to both MPI/GPI */
 
   // global reduction for MPI execution, if needed
   // p_a simply used to determine type for MPI reduction
+#ifdef HAVE_GPI
+  //printf("About to do reduction\n");
+  //fflush(stdout);
+  (void)std::initializer_list<int>{
+      (op_gpi_reduce(&arguments, (T *)p_a[I]), 0)...};
+  //printf("finished reduction\n");
+  //fflush(stdout);
+#else
   (void)std::initializer_list<int>{
       (op_mpi_reduce(&arguments, (T *)p_a[I]), 0)...};
+#endif
 
   // update timer record
   op_timers_core(&cpu_t2, &wall_t2);
 #ifdef COMM_PERF
-  void *k_i = op_mpi_perf_time(name, wall_t2 - wall_t1);
-  op_mpi_perf_comms(k_i, 20, args);
+  void *k_i = op_comm_perf_time(name, wall_t2 - wall_t1);
+  op_comm_perf_comms(k_i, 20, args);
 #else
-  op_mpi_perf_time(name, wall_t2 - wall_t1);
-#endif
+  op_comm_perf_time(name, wall_t2 - wall_t1);
+#endif /* COMM_PERF*/
+
+  //LOCKSTEP(rank, "After gpi perf comms\n");
+
   (void)std::initializer_list<int>{
       (arguments.idx < -1 ? free(p_a[I]), 0 : 0)...};
+
+  //LOCKSTEP(rank, "After args free\n");
 }
 
 //
