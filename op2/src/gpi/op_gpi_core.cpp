@@ -726,6 +726,7 @@ int GPI_allgather(gaspi_segment_id_t segment_id_local, /* Send segment */
     //TODO rewrite for gaspi_write_list for performance improvements
     for(i=0;i<group_size;i++){
         gaspi_rank_t remote_rank = group_ranks[i];
+        if (remote_rank == irank) continue;
         //if(remote_rank==irank) continue; //TODO update logic to write locally instead? see if it's faster...
 
 #ifdef VERBOSE
@@ -744,6 +745,11 @@ int GPI_allgather(gaspi_segment_id_t segment_id_local, /* Send segment */
                            timeout)
                            , queue )
     }
+    gaspi_pointer_t *seg;
+    GPI_SAFE( gaspi_segment_ptr(segment_id_local, seg) );
+    gaspi_pointer_t *source = seg + offset_local;
+    gaspi_pointer_t *dest = seg + offset_remote;
+    memcpy(dest, source, size);
     
 
     //Wait for notifications
