@@ -746,7 +746,6 @@ int GPI_allgather(gaspi_segment_id_t segment_id_local, /* Send segment */
     for(i=0;i<group_size;i++){
         gaspi_rank_t remote_rank = group_ranks[i];
         if(remote_rank == irank) continue; //TODO update logic to write locally instead? see if it's faster...
-
 #ifdef VERBOSE
         printf("Proc %d sending to %d.\n", irank, remote_rank);
 #endif
@@ -768,7 +767,6 @@ int GPI_allgather(gaspi_segment_id_t segment_id_local, /* Send segment */
     gaspi_pointer_t *source = seg + offset_local;
     gaspi_pointer_t *dest = seg + offset_remote;
     memcpy(dest, source, size);
-
 
     //Wait for notifications
     

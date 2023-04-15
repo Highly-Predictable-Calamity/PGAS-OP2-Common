@@ -178,6 +178,8 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
   op_comm_perf_comms(k_i, 20, args);
 #else
   op_comm_perf_time(name, wall_t2 - wall_t1);
+  op_comm_perf_time_breakdown(name, "memcpy", 0.02);
+  op_comm_perf_time_breakdown(name, "other", 0.03);
 #endif /* COMM_PERF*/
 
   //LOCKSTEP(rank, "After gpi perf comms\n");

@@ -175,5 +175,7 @@ void op_gpi_timing_output() {
   op_gpi_timing_output_core();
   if (op_is_root())
     printf("Total plan time: %8.4f\n", OP_plan_time);
-  gpi_timing_output();
+
+  comm_timing_output();
 }
+
