@@ -143,6 +143,7 @@ OP2_MPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
 	mpi/op_mpi_rt_support.o \
 	mpi/op_mpi_hdf5.o \
 	mpi/op_mpi_util.o \
+	common/op_perf_common.o \
 	externlib/op_util.o \
 	externlib/op_renumber.o)
 
@@ -171,6 +172,8 @@ OP2_GPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
 	gpi/op_gpi_rt_support.o \
 	gpi/op_gpi_util.o \
 	externlib/op_renumber+gpi.o \
+	externlib/op_util+gpi.o \
+	common/op_perf_common+gpi.o \
 	gpi/op_mpi_core+gpi.o \
 	gpi/op_mpi_part_core+gpi.o \
 	gpi/op_mpi_decl+gpi.o \
@@ -197,6 +200,9 @@ $(MOD)/%:
 
 # Compile GPI-specific versions of certain files
 $(OBJ)/externlib/%+gpi.o: src/externlib/%.cpp | $(OBJ)
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
+
+$(OBJ)/common/%+gpi.o: src/common/%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
 
 $(OBJ)/gpi/%+gpi.o: src/mpi/%.cpp | $(OBJ)
