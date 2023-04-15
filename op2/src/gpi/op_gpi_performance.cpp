@@ -94,43 +94,55 @@ void gpi_timing_output() {
     double tot_time;
     double avg_time;
 
-    printf("___________________________________________________\n");
-    printf("Performance information on rank %d\n", my_rank);
-    printf("Kernel        Count  total time(sec)  Avg time(sec)  \n");
+
 
     op_comm_kernel *k;
-    for (k = op_comm_kernel_tab; k != NULL; k = (op_comm_kernel *)k->hh.next) {
-      if (k->count > 0) {
-        printf("%-10s  %6d       %10.4f      %10.4f    \n", k->name, k->count,
-               k->time, k->time / k->count);
+		int i = 0;
+		// Print the rank-local performance information within a lockstep for each rank
+		while (i < comm_size) {
+			MPI_Barrier(OP_MPI_IO_WORLD);
+			if (i == my_rank) {
 
+				printf("___________________________________________________\n");
+				printf("Performance information on rank %d\n", my_rank);
+				printf("Kernel        Count  total time(sec)  Avg time(sec)  \n");
+				for (k = op_comm_kernel_tab; k != NULL; k = (op_comm_kernel *)k->hh.next) {
+					if (k->count > 0) {
+						printf("%-10s  %6d       %10.4f      %10.4f    \n", k->name, k->count,
+									 k->time, k->time / k->count);
 #ifdef COMM_PERF
-        if (k->num_indices > 0) {
-          printf("halo exchanges:  ");
-          for (int i = 0; i < k->num_indices; i++)
-            printf("%10s ", k->comm_info[i]->name);
-          printf("\n");
-          printf("       count  :  ");
-          for (int i = 0; i < k->num_indices; i++)
-            printf("%10d ", k->comm_info[i]->count);
-          printf("\n");
-          printf("total(Kbytes) :  ");
-          for (int i = 0; i < k->num_indices; i++)
-            printf("%10d ", k->comm_info[i]->bytes / 1024);
-          printf("\n");
-          printf("average(bytes):  ");
-          for (int i = 0; i < k->num_indices; i++)
-            printf("%10d ", k->comm_info[i]->bytes / k->comm_info[i]->count);
-          printf("\n");
-        } else {
-          printf("halo exchanges:  %10s\n", "NONE");
-        }
-        printf("---------------------------------------------------\n");
+						if (k->num_indices > 0) {
+							printf("halo exchanges:  ");
+							for (int i = 0; i < k->num_indices; i++)
+								printf("%10s ", k->comm_info[i]->name);
+							printf("\n");
+							printf("       count  :  ");
+							for (int i = 0; i < k->num_indices; i++)
+								printf("%10d ", k->comm_info[i]->count);
+							printf("\n");
+							printf("total(Kbytes) :  ");
+							for (int i = 0; i < k->num_indices; i++)
+								printf("%10d ", k->comm_info[i]->bytes / 1024);
+							printf("\n");
+							printf("average(bytes):  ");
+							for (int i = 0; i < k->num_indices; i++)
+								printf("%10d ", k->comm_info[i]->bytes / k->comm_info[i]->count);
+							printf("\n");
+						} else {
+							printf("halo exchanges:  %10s\n", "NONE");
+						}
+						printf("---------------------------------------------------\n");
 #endif
-      }
-    }
-    printf("___________________________________________________\n");
+					}
+				}
+				printf("___________________________________________________\n");
+			} /* if i==my_rank */
+			i++;
+			MPI_Barrier(OP_MPI_IO_WORLD);
+		}
 
+		// Wait for all ranks to print before printing the general summary
+		MPI_Barrier(OP_MPI_IO_WORLD);
     if (my_rank == MPI_ROOT) {
       printf("___________________________________________________\n");
       printf("\nKernel        Count   Max time(sec)   Avg time(sec)  \n");
@@ -147,6 +159,7 @@ void gpi_timing_output() {
       if (my_rank == MPI_ROOT && count > 0) {
         printf("%-10s  %6d       %10.4f      %10.4f    \n", k->name, count,
                tot_time, (avg_time) / comm_size);
+				
       }
       tot_time = avg_time = 0.0;
     }
@@ -162,5 +175,7 @@ void op_gpi_timing_output() {
   op_gpi_timing_output_core();
   if (op_is_root())
     printf("Total plan time: %8.4f\n", OP_plan_time);
+
   comm_timing_output();
 }
+
