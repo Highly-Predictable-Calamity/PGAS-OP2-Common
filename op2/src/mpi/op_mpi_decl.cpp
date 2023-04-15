@@ -46,6 +46,7 @@
 #ifdef HAVE_GPI
 #include <GASPI.h>
 #include "../gpi/gpi_utils.h"
+#include <op_gpi_performance.h>
 #endif
 
 //
@@ -358,6 +359,9 @@ void op_timers(double *cpu, double *et) {
 }
 
 void op_timing_output() {
+#ifdef HAVE_GPI
+  op_gpi_timing_output();
+#else
   double max_plan_time = 0.0;
   MPI_Reduce(&OP_plan_time, &max_plan_time, 1, MPI_DOUBLE, MPI_MAX, 0,
              OP_MPI_WORLD);
@@ -365,6 +369,7 @@ void op_timing_output() {
   if (op_is_root())
     printf("Total plan time: %8.4f\n", OP_plan_time);
   mpi_timing_output();
+#endif
 }
 
 void op_timings_to_csv(const char *outputFileName) {
