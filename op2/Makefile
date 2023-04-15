@@ -143,7 +143,7 @@ OP2_MPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
 	mpi/op_mpi_rt_support.o \
 	mpi/op_mpi_hdf5.o \
 	mpi/op_mpi_util.o \
-	common/op_perf_common.o \
+	common/op_perf_common+mpi.o \
 	externlib/op_util.o \
 	externlib/op_renumber.o)
 
@@ -231,6 +231,9 @@ $(OBJ)/common/%.o: src/common/%.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
 
 $(OBJ)/mpi/%.o: src/mpi/%.cpp | $(OBJ)
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
+
+$(OBJ)/common/%+mpi.o: src/common%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
 
 $(OBJ)/mpi/%.o: src/mpi/%.cu | $(OBJ)
