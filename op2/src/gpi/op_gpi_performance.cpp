@@ -135,13 +135,14 @@ void gpi_timing_output() {
 #endif
 					}
 				}
+				printf("___________________________________________________\n");
 			} /* if i==my_rank */
 			i++;
 			MPI_Barrier(OP_MPI_IO_WORLD);
 		}
-		
-    printf("___________________________________________________\n");
 
+		// Wait for all ranks to print before printing the general summary
+		MPI_Barrier(OP_MPI_IO_WORLD);
     if (my_rank == MPI_ROOT) {
       printf("___________________________________________________\n");
       printf("\nKernel        Count   Max time(sec)   Avg time(sec)  \n");
