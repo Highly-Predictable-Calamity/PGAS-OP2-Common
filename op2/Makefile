@@ -33,6 +33,12 @@ ifeq ($(HAVE_C),true)
   endif
 
   ifeq ($(MPI_IS_BUILDABLE),true)
+    ifeq ($(HAVE_GPI),true)
+      OP2_BUILDABLE_LIBS += gpi
+    endif
+  endif
+
+  ifeq ($(MPI_IS_BUILDABLE),true)
     OP2_BUILDABLE_LIBS += mpi
   endif
 
@@ -159,6 +165,19 @@ OP2_FOR_MPI_CUDA := $(OP2_MPI_CUDA) $(OP2_FOR_BASE_MPI_CUDA) $(addprefix $(OBJ)/
 	op2_for_rt_wrappers_cuda.o \
 	cudaConfigurationParams.o)
 
+OP2_GPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
+	gpi/op_gpi_core.o \
+	gpi/op_gpi_performance.o \
+	gpi/op_gpi_rt_support.o \
+	gpi/op_gpi_util.o \
+	externlib/op_renumber+gpi.o \
+	gpi/op_mpi_core+gpi.o \
+	gpi/op_mpi_part_core+gpi.o \
+	gpi/op_mpi_decl+gpi.o \
+	gpi/op_mpi_rt_support+gpi.o \
+	gpi/op_mpi_hdf5+gpi.o \
+	gpi/op_mpi_util+gpi.o)
+
 # Directory rules
 $(OBJ):
 	@mkdir -p $@
@@ -175,6 +194,16 @@ $(MOD)/%:
 	@mkdir -p $@
 
 # Rules for files with a specific compilation setup
+
+# Compile GPI-specific versions of certain files
+$(OBJ)/externlib/%+gpi.o: src/externlib/%.cpp | $(OBJ)
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
+
+$(OBJ)/gpi/%+gpi.o: src/mpi/%.cpp | $(OBJ)
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
+
+$(OBJ)/gpi/%.o: src/gpi/%.cpp | $(OBJ)
+	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
 
 $(OBJ)/externlib/op_hdf5.o: src/externlib/op_hdf5.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) $(INC) $(HDF5_SEQ_INC) -c $< -o $@
