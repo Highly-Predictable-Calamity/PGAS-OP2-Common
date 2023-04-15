@@ -233,7 +233,7 @@ $(OBJ)/common/%.o: src/common/%.cpp | $(OBJ)
 $(OBJ)/mpi/%.o: src/mpi/%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
 
-$(OBJ)/common/%+mpi.o: src/common%.cpp | $(OBJ)
+$(OBJ)/common/%+mpi.o: src/common/%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
 
 $(OBJ)/mpi/%.o: src/mpi/%.cu | $(OBJ)
