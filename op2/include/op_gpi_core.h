@@ -44,7 +44,7 @@ struct op_gpi_buffer_core{
   op_gpi_recv_obj *exec_recv_objs; /*  For exec elements of this dat, one for each of the expected notifications*/
   op_gpi_recv_obj *nonexec_recv_objs; /* For nonexec elements of this dat , one for each of the expected notifications*/
   MPI_Request *pre_exchange_hndl_s; /* data pre exchange handles for sends */
-  MPI_Request *pre_exchange_hndl_r; /* data pre exchange handles for receives */
+  MPI_Request *pre_exchange_hndl_r; /* UNUSED - data pre exchange handles for receives */
   unsigned long *remote_exec_offsets; /* execute segment offset for each remote(import) rank */
   unsigned long *remote_nonexec_offsets; /* non-execute segment offset for each remote(import) rank */
 };
@@ -64,6 +64,8 @@ void op_gpi_waitall(op_arg *arg);
 void op_gpi_waitall_args(int nargs, op_arg *args);
 
 void *op_gpi_perf_time(const char *name, double time);
+
+void op_gpi_exit();
 
 /* HELPER Functions */
 
