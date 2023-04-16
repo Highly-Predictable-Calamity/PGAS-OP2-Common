@@ -107,7 +107,7 @@ void *op_mpi_perf_time(const char *name, double time) {
   (void)time;
   return (void *)name;
 }
-
+ 
 #ifdef COMM_PERF
 void op_mpi_perf_comms(void *k_i, int nargs, op_arg *args) {
   (void)k_i;
@@ -169,12 +169,14 @@ void op_gpi_reduce_bool(op_arg *args, bool *data) {
 void *op_comm_perf_time(const char *name, double time) {
   (void)name;
   (void)time;
+  return (void*)name;
 }
-  
+ 
 void *op_comm_perf_time_breakdown(const char *kernel_name, const char *breakdown_name, double time){
   (void)kernel_name;
   (void)breakdown_name;
   (void)time;
+  return (void*)breakdown_name;
 }
 
 void op_partition(const char *lib_name, const char *lib_routine,

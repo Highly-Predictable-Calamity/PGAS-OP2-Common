@@ -167,6 +167,7 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
   (void)std::initializer_list<int>{
       (arguments.idx < -1 ? free(p_a[I]), 0 : 0)...};
 
+
 }
 //
 // op_par_loop routine wrapper to create index sequence
