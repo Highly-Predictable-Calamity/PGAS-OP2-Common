@@ -166,6 +166,17 @@ void op_gpi_reduce_bool(op_arg *args, bool *data) {
   (void)data;
 }
 
+void *op_comm_perf_time(const char *name, double time) {
+  (void)name;
+  (void)time;
+}
+  
+void *op_comm_perf_time_breakdown(const char *kernel_name, const char *breakdown_name, double time){
+  (void)kernel_name;
+  (void)breakdown_name;
+  (void)time;
+}
+
 void op_partition(const char *lib_name, const char *lib_routine,
                   op_set prime_set, op_map prime_map, op_dat coords) {
   (void)lib_name;
