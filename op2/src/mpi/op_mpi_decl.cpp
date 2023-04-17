@@ -47,6 +47,7 @@
 #include <GASPI.h>
 #include "../gpi/gpi_utils.h"
 #include <op_gpi_performance.h>
+#include <op_gpi_core.h>
 #endif
 
 //
@@ -302,6 +303,10 @@ void op_print(const char *line) {
 
 void op_exit() {
 
+#ifdef HAVE_GPI
+  op_gpi_exit();
+#endif
+  
   op_mpi_exit();
   op_rt_exit();
   op_exit_core();
