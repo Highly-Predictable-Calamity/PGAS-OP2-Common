@@ -25,18 +25,17 @@
 }
 
 
-#define GPI_QUEUE_SAFE(f, queue) {\
-    gaspi_rank_t _rank;\
-    gaspi_proc_rank(&_rank);\
-    gaspi_return_t _ret;\
-    while ((_ret = (f)) == GASPI_QUEUE_FULL) {\
-        fprintf(stderr,"Waiting for queue...\n");\
+#define GPI_QUEUE_SAFE(f, queue) {               \
+    gaspi_rank_t _rank;                          \
+    gaspi_proc_rank(&_rank);                     \
+    gaspi_return_t _ret;                         \
+    while ((_ret = (f)) == GASPI_QUEUE_FULL) {   \
         gaspi_return_t _waitret = gaspi_wait ((queue), GASPI_BLOCK);\
-        if( _waitret != GASPI_SUCCESS) {\
+        if( _waitret != GASPI_SUCCESS) {         \
             fprintf(stderr, "On rank %d: queue was full and something went wrong with waiting at function %s at %s (%d).\n", _rank, #f, __FILE__, __LINE__);\
-            fflush(stderr);\
-            gaspi_proc_term(GASPI_BLOCK);\
-            MPI_Abort(MPI_COMM_WORLD, 1);\
+            fflush(stderr);                      \
+            gaspi_proc_term(GASPI_BLOCK);        \
+            MPI_Abort(MPI_COMM_WORLD, 1);        \
         }\
     }\
     switch (_ret) {\
