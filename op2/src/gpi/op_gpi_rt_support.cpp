@@ -11,7 +11,8 @@
 #include <op_rt_support.h> /* Check this- likely not needed.*/
 
 #include <op_gpi_core.h> 
- 
+#include <op_perf_common.h>
+
 #include "gpi_utils.h"
 
 /* returns the number of 1 bits in the character */
@@ -306,9 +307,12 @@ void op_gpi_waitall(op_arg *arg){
         //fflush(stdout);
 
 
-
+        op_timers_core(&c1, &t1);
+        
         // Copy the data into the op_dat->data array
         memcpy(obj->memcpy_addr, (void*) (ieh_segment_ptr + obj->segment_recv_offset), obj->size);
+        op_timers_core(&c2, &t2);
+        op_comm_perf_time("memcpy",t2-t1);
 
         // XOR bitwise test
         //printf("Dat: %s: Rank %d received %d bytes of exec data from rank %d with segment offset %d.\n", dat->name, rank, obj->size, recv_rank, obj->segment_recv_offset);
@@ -386,8 +390,12 @@ void op_gpi_waitall(op_arg *arg){
         //Use to memcpy data
         op_gpi_recv_obj *obj = &nonexec_recv_objs[obj_idx]; /* not neccessary but looks nicer later*/
         
+        op_timers_core(&c1, &t1);
+
         // Copy the data into the op_dat->data array
         memcpy(obj->memcpy_addr, (void*) (inh_segment_ptr + obj->segment_recv_offset), obj->size);
+        op_timers_core(&c2, &t2);
+        op_comm_perf_time("memcpy",t2-t1);
 
         // printf("Rank %d received nonexec data from rank %d for dat %s. XOR: %d, MEMCPYADDR: %p\n", rank, recv_rank, dat->name, xor_byte_summation(obj->memcpy_addr, obj->size), obj->memcpy_addr);
 

@@ -363,9 +363,6 @@ int main(int argc, char **argv) {
   // trigger partitioning and halo creation routines
   op_partition("PTSCOTCH", "KWAY", cells, pecell, p_x);
   // op_partition("PARMETIS", "KWAY", cells, pecell, p_x);
-  printf("after partition!\n");
-
-  fflush(stdout);
 
   // initialise timers for total execution wall time
   op_timers(&cpu_t1, &wall_t1);
@@ -480,7 +477,7 @@ int main(int argc, char **argv) {
   op_fetch_data_idx(p_q, q_part, 0, op_get_size(cells) - 1);
   free(q_part);
   printf("\nairfoil_mpi.cpp\n");
-  op_gpi_timing_output();
+  op_timing_output();
   op_printf("Max total runtime = %f\n", wall_t2 - wall_t1);
 
   op_exit();
