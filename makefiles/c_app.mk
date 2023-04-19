@@ -6,9 +6,11 @@ APP_ENTRY_GPI ?= $(APP_ENTRY_MPI)
 
 APP_ENTRY_BASENAME := $(basename $(APP_ENTRY))
 APP_ENTRY_MPI_BASENAME := $(basename $(APP_ENTRY_MPI))
+APP_ENTRY_GPI_BASENAME := $(basename $(APP_ENTRY_GPI))
 
 APP_ENTRY_OP := $(APP_ENTRY_BASENAME)_op.cpp
 APP_ENTRY_MPI_OP := $(APP_ENTRY_MPI_BASENAME)_op.cpp
+APP_ENTRY_GPI_OP := $(APP_ENTRY_GPI_BASENAME)_op.cpp
 
 # This is used for clean
 ALL_VARIANTS_BASE := seq genseq vec openmp openmp4 cuda cuda_hyb
@@ -59,7 +61,7 @@ ifneq ($(and $(wildcard ./$(APP_ENTRY_GPI)),$(HAVE_GPI)),)
   BUILDABLE_VARIANTS :=  $(filter-out %_gpi_cuda_hyb,$(BUILDABLE_VARIANTS))
 endif
 
-$(info Buildable app variants before filtering: $(BUILDABLE_VARIANTS))
+# $(info Buildable app variants before filtering: $(BUILDABLE_VARIANTS))
 
 VARIANT_FILTER ?= %
 VARIANT_FILTER_OUT ?=
@@ -104,10 +106,12 @@ clean:
 
 SEQ_SRC := $(APP_ENTRY)
 MPI_SEQ_SRC := $(APP_ENTRY_MPI)
+GPI_SEQ_SRC := $(APP_ENTRY_GPI)
 
 define SRC_template =
 $(1)_SRC := $$(APP_ENTRY_OP) $$(subst %,$$(APP_ENTRY_BASENAME),$(2))
 MPI_$(1)_SRC := $$(APP_ENTRY_MPI_OP) $$(subst %,$$(APP_ENTRY_MPI_BASENAME),$(2))
+#GPI_$(1)_SRC := $$(APP_ENTRY_GPI_OP) $$(subst %,$$(APP_ENTRY_GPI_BASENAME),$(2))
 endef
 
 $(eval $(call SRC_template,GENSEQ,seq/%_seqkernels.cpp))
@@ -128,6 +132,8 @@ CUDA_HYB_SRC := $(APP_ENTRY_OP) \
 MPI_CUDA_HYB_SRC := $(APP_ENTRY_MPI_OP) \
 	cuda/$(APP_NAME)_mpi_hybkernels_cpu.o cuda/$(APP_NAME)_mpi_hybkernels_gpu.o
 
+# GPI - Move to SRC template once more than SEQ and GENSEQ is supported
+#GPI_GENSEQ_SRC := $(APP_ENTRY_GPI_OP) seq/$(APP_ENTRY_GPI_BASENAME)_seqkernels.cpp
 
 # $(1) = variant name
 # $(2) = additional flags
@@ -158,12 +164,18 @@ $(eval $(call RULE_template, cuda,,                                             
 $(eval $(call RULE_template, cuda_hyb, $(OMP_CPPFLAGS),                         CUDA,    MPI_CUDA))
 #$(eval $(call RULE_template, gpi,,                                              SEQ,     GPI))
 
-
 $(APP_NAME)_cuda: cuda/$(APP_NAME)_kernels.o
 $(APP_NAME)_mpi_cuda: cuda/$(APP_NAME)_mpi_kernels.o
 
 $(APP_NAME)_cuda_hyb: cuda/$(APP_NAME)_hybkernels_gpu.o cuda/$(APP_NAME)_hybkernels_cpu.o
 $(APP_NAME)_mpi_cuda_hyb: cuda/$(APP_NAME)_mpi_hybkernels_gpu.o cuda/$(APP_NAME)_mpi_hybkernels_cpu.o
+
+# RULES for building GPI - not inside RULE_template_base for now (TODO when more GPI variants supported)
+$(APP_NAME)_gpi_seq: .generated
+	$(MPICXX) $(CXXFLAGS) $(OP2_INC) $(GPI_INC) $(GPI_SEQ_SRC) $(OP2_LIB_GPI) $(GPI_LIB) -o $@
+
+#$(APP_NAME)_gpi_genseq: .generated
+#	$(MPICXX) $(CXXFLAGS) $(OP2_INC) $(GPI_INC) $(GPI_GENSEQ_SRC) $(OP2_LIB_GPI) $(GPI_LIB) -o $@
 
 cuda/$(APP_NAME)_kernels.o: .generated
 	$(NVCC) $(NVCCFLAGS) $(OP2_INC) -c cuda/$(APP_ENTRY_BASENAME)_kernels.cu -o $@

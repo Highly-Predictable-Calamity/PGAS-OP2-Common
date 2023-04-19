@@ -792,3 +792,41 @@ int GPI_allgather(gaspi_segment_id_t segment_id_local, /* Send segment */
 
     return GASPI_SUCCESS;
 }
+
+
+
+void op_gpi_exit(){
+  op_dat_entry *item;
+  gaspi_rank_t rank;
+  gaspi_proc_rank(&rank);
+  
+  /* Free's all gpi_buffer information*/
+  TAILQ_FOREACH(item, &OP_dat_list, entries){
+    op_dat dat = item->dat;
+
+    op_gpi_buffer buf= (op_gpi_buffer)dat->gpi_buffer;
+
+    free(buf->exec_recv_objs);
+    free(buf->nonexec_recv_objs);
+
+    free(buf->pre_exchange_hndl_s);
+    //free(buf->pre_exchange_hndl_r); - UNUSED
+
+    free(buf->remote_exec_offsets);
+    free(buf->remote_nonexec_offsets);
+
+    free(buf);
+  }
+
+  //Terminate the GASPI process
+
+  GPI_SAFE( gaspi_proc_term(GPI_TIMEOUT) )
+
+  // Free the segments
+  free(eeh_segment_ptr);
+  free(enh_segment_ptr);
+  free(ieh_segment_ptr);
+  free(inh_segment_ptr);
+
+  free(msc_segment_ptr);
+}

@@ -47,7 +47,9 @@
 #include <GASPI.h>
 #include "../gpi/gpi_utils.h"
 #include <op_gpi_performance.h>
+#include <op_gpi_core.h>
 #endif
+
 //
 // MPI Communicator for halo creation and exchange
 //
@@ -55,8 +57,10 @@
 MPI_Comm OP_MPI_WORLD;
 MPI_Comm OP_MPI_GLOBAL;
 
+#ifdef HAVE_GPI
 gaspi_group_t OP_GPI_WORLD;
 gaspi_group_t OP_GPI_GLOBAL;
+#endif
 
 /*
  * Routines called by user code and kernels
@@ -116,6 +120,20 @@ void op_mpi_init(int argc, char **argv, int diags, MPI_Fint global,
   OP_MPI_WORLD = MPI_Comm_f2c(local);
   OP_MPI_GLOBAL = MPI_Comm_f2c(global);
 
+#ifdef HAVE_GPI
+  if(!flag){
+    fprintf(stderr, "MPI must be initialised before GPI init.");
+    exit(-1);
+  }
+  
+  MPI_Barrier(OP_MPI_GLOBAL);
+
+  gaspi_proc_init(1500);
+	
+	gaspi_barrier(GASPI_GROUP_ALL ,1500);
+
+	printf("Hello from GPI\n");
+#endif
   op_init_core(argc, argv, diags);
 }
 
@@ -285,6 +303,10 @@ void op_print(const char *line) {
 
 void op_exit() {
 
+#ifdef HAVE_GPI
+  op_gpi_exit();
+#endif
+  
   op_mpi_exit();
   op_rt_exit();
   op_exit_core();

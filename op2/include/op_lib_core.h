@@ -366,6 +366,11 @@ void op_partition(const char *lib_name, const char *lib_routine,
 void op_partition_destroy();
 
 void *op_mpi_perf_time(const char *name, double time);
+
+void *op_comm_perf_time(const char *name, double time);
+
+void *op_comm_perf_time_breakdown(const char *kernel_name, const char *breakdown_name, double time);
+
 #ifdef COMM_PERF
 void op_mpi_perf_comms(void *k_i, int nargs, op_arg *args);
 #endif
