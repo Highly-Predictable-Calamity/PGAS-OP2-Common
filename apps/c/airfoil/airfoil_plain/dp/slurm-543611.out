@@ -1,0 +1,259 @@
+
+ Initializing OP2
+initialising flow field
+reading in grid 
+Global number of nodes, cells, edges, bedges = 721801, 720000, 1438600, 2800
+Number of nodes, cells, edges, bedges on process 0 = 120301, 120000, 239767, 467
+Max total file read time = 1.415229
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes     120301
+     edges     239767
+    bedges        467
+     cells     120000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+OP2 Library Not built with Partitioning Library : PTSCOTCH
+Ignoring input routine : KWAY
+Ignoring input mapping : cells
+Ignoring input mapping : pecell
+Ignoring input data : p_x
+Reverting to trivial block partitioning
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes     120300
+     edges     239767
+    bedges        467
+     cells     120000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes     120300
+     edges     239766
+    bedges        466
+     cells     120000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes     120300
+     edges     239766
+    bedges        466
+     cells     120000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes     120300
+     edges     239767
+    bedges        467
+     cells     120000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes     120300
+     edges     239767
+    bedges        467
+     cells     120000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+Num of    nodes (avg | min | max)
+total elems             120300     120300     120301
+core elems             120300     120300     120301 
+exec halo elems              0          0          0 
+non-exec halo elems       2436       1202       2901 
+-----------------------------------------------------
+Num of    edges (avg | min | max)
+total elems             239766     239766     239767
+core elems             237700     237367     238101 
+exec halo elems           2066        667       2800 
+non-exec halo elems          0          0          0 
+-----------------------------------------------------
+Num of   bedges (avg | min | max)
+total elems                466        466        467
+core elems                100          0        467 
+exec halo elems            367        101       1401 
+non-exec halo elems          0          0          0 
+-----------------------------------------------------
+Num of    cells (avg | min | max)
+total elems             120000     120000     120000
+core elems             118999     118999     119000 
+exec halo elems           1000        200       1401 
+non-exec halo elems       1364        999       1466 
+-----------------------------------------------------
+
+
+MPI neighbors for exchanging    nodes (avg | min | max)
+exec halo elems        0    0    0
+non-exec halo elems    3    1    5
+-----------------------------------------------------
+MPI neighbors for exchanging    edges (avg | min | max)
+exec halo elems        1    1    2
+non-exec halo elems    0    0    0
+-----------------------------------------------------
+MPI neighbors for exchanging   bedges (avg | min | max)
+exec halo elems        2    1    4
+non-exec halo elems    0    0    0
+-----------------------------------------------------
+MPI neighbors for exchanging    cells (avg | min | max)
+exec halo elems        1    1    2
+non-exec halo elems    3    1    5
+-----------------------------------------------------
+Max total halo creation time = 0.712126
+Average (worst case) Halo size = 286484 Bytes
+ 100  5.02186e-04 
+ 200  3.41746e-04 
+ 300  2.63430e-04 
+ 400  2.16288e-04 
+ 500  1.84659e-04 
+ 600  1.60866e-04 
+ 700  1.42253e-04 
+ 800  1.27627e-04 
+ 900  1.15810e-04 
+ 1000  1.06011e-04 
+rms at iter 1000 = 1.060114637578e-04
+
+Test problem with 720000 cells is within 1.962519036169397E-11 % of the expected solution
+This test is considered PASSED
+
+airfoil_mpi.cpp
+Total plan time:   0.0000
+Max total runtime = 26.077335
+
+airfoil_mpi.cpp
+
+airfoil_mpi.cpp
+
+airfoil_mpi.cpp
+
+airfoil_mpi.cpp
+
+airfoil_mpi.cpp

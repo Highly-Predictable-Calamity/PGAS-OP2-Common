@@ -357,9 +357,6 @@ int main(int argc, char **argv) {
 
   op_diagnostic_output();
   
-  printf("before partition!\n");
-  fflush(stdout);
-
   // trigger partitioning and halo creation routines
   op_partition("PTSCOTCH", "KWAY", cells, pecell, p_x);
   // op_partition("PARMETIS", "KWAY", cells, pecell, p_x);

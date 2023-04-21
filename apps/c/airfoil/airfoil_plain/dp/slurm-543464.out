@@ -1,0 +1,950 @@
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Parsed machine file
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Broadcasted topology
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+before barrier
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+Initialised core
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+before barrier
+after barrier
+after barrier
+after barrier
+after barrier
+after barrier
+after barrier
+
+ Initializing OP2
+after barrier
+after barrier
+after barrier
+after barrier
+after barrier
+after barrier
+after barrier
+initialising flow field
+reading in grid 
+Global number of nodes, cells, edges, bedges = 721801, 720000, 1438600, 2800
+after barrier
+after barrier
+after barrier
+Number of nodes, cells, edges, bedges on process 0 = 45113, 45000, 89913, 175
+Max total file read time = 2.223686
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+OP2 Library Not built with Partitioning Library : PTSCOTCH
+Ignoring input routine : KWAY
+Ignoring input mapping : cells
+Ignoring input mapping : pecell
+Ignoring input data : p_x
+Reverting to trivial block partitioning
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45113
+     edges      89913
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+
+  OP diagnostic output
+  --------------------
+
+       set       size
+  -------------------
+     nodes      45112
+     edges      89912
+    bedges        175
+     cells      45000
+
+       map        dim       from         to
+  -----------------------------------------
+     pedge          2      edges      nodes
+    pecell          2      edges      cells
+    pbedge          2     bedges      nodes
+   pbecell          1     bedges      cells
+     pcell          4      cells      nodes
+
+       dat        dim        set
+  ------------------------------
+   p_bound          1     bedges
+       p_x          2      nodes
+       p_q          4      cells
+    p_qold          4      cells
+     p_adt          1      cells
+     p_res          4      cells
+
+before partition!
+Num of    nodes (avg | min | max)
+total elems              45112      45112      45113
+core elems              45112      45112      45113 
+exec halo elems              0          0          0 
+non-exec halo elems       2506       1202       2980 
+-----------------------------------------------------
+Num of    edges (avg | min | max)
+total elems              89912      89912      89913
+core elems              87569      87137      88039 
+exec halo elems           2343        525       2924 
+non-exec halo elems          0          0          0 
+-----------------------------------------------------
+Num of   bedges (avg | min | max)
+total elems                175        175        175
+core elems                 16          0        175 
+exec halo elems            159         38       1275 
+non-exec halo elems          0          0          0 
+-----------------------------------------------------
+Num of    cells (avg | min | max)
+total elems              45000      45000      45000
+core elems              43874      43873      43875 
+exec halo elems           1125         75       1277 
+non-exec halo elems       1281       1124       1300 
+-----------------------------------------------------
+
+
+MPI neighbors for exchanging    nodes (avg | min | max)
+exec halo elems        0    0    0
+non-exec halo elems    4    1    8
+-----------------------------------------------------
+MPI neighbors for exchanging    edges (avg | min | max)
+exec halo elems        1    1    2
+non-exec halo elems    0    0    0
+-----------------------------------------------------
+MPI neighbors for exchanging   bedges (avg | min | max)
+exec halo elems        2    1    8
+non-exec halo elems    0    0    0
+-----------------------------------------------------
+MPI neighbors for exchanging    cells (avg | min | max)
+exec halo elems        1    1    2
+non-exec halo elems    4    1    8
+-----------------------------------------------------
+Max total halo creation time = 0.609552
+Average (worst case) Halo size = 291117 Bytes
+Dat:     p_q: Rank 0 export remote info --- other rank: 1, receive_offset:     312 at recv offset addr 0x1852e90 export exec list ptr 0x3e1a220
+Dat:  p_qold: Rank 0 export remote info --- other rank: 1, receive_offset:   41144 at recv offset addr 0x1852f30 export exec list ptr 0x3e1a220
+Dat:   p_adt: Rank 0 export remote info --- other rank: 1, receive_offset:   81976 at recv offset addr 0x1852ff0 export exec list ptr 0x3e1a220
+Dat:   p_res: Rank 0 export remote info --- other rank: 1, receive_offset:   92184 at recv offset addr 0x20e72f0 export exec list ptr 0x3e1a220
+Passed end barrier
+Rank 0 segment sizes:
+ - EEH: 117000b 
+ - ENH 63064b 
+ - IEH 9104b 
+ - INH 136128b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 7 export remote info --- other rank: 15, receive_offset:    1052 at recv offset addr 0xd9cec0 export exec list ptr 0xd8f060
+Dat:     p_q: Rank 7 export remote info --- other rank: 6, receive_offset:   24240 at recv offset addr 0x5d3a9f0 export exec list ptr 0x3020b40
+Dat:     p_q: Rank 7 export remote info --- other rank: 8, receive_offset:     312 at recv offset addr 0x5d3a9f8 export exec list ptr 0x3020b40
+Dat:  p_qold: Rank 7 export remote info --- other rank: 6, receive_offset:   65104 at recv offset addr 0x5d3aa50 export exec list ptr 0x3020b40
+Dat:  p_qold: Rank 7 export remote info --- other rank: 8, receive_offset:   41144 at recv offset addr 0x5d3aa58 export exec list ptr 0x3020b40
+Dat:   p_adt: Rank 7 export remote info --- other rank: 6, receive_offset:   88016 at recv offset addr 0x5d3ab60 export exec list ptr 0x3020b40
+Dat:   p_adt: Rank 7 export remote info --- other rank: 8, receive_offset:   81976 at recv offset addr 0x5d3ab68 export exec list ptr 0x3020b40
+Dat:   p_res: Rank 7 export remote info --- other rank: 6, receive_offset:  116184 at recv offset addr 0xda0de0 export exec list ptr 0x3020b40
+Dat:   p_res: Rank 7 export remote info --- other rank: 8, receive_offset:   92184 at recv offset addr 0xda0de8 export exec list ptr 0x3020b40
+Passed end barrier
+Rank 7 segment sizes:
+ - EEH: 117804b 
+ - ENH 179976b 
+ - IEH 133016b 
+ - INH 176376b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 5 export remote info --- other rank: 12, receive_offset:     104 at recv offset addr 0x21f0a00 export exec list ptr 0x21e3060
+Dat: p_bound: Rank 5 export remote info --- other rank: 13, receive_offset:       0 at recv offset addr 0x21f0a08 export exec list ptr 0x21e3060
+Dat: p_bound: Rank 5 export remote info --- other rank: 14, receive_offset:       0 at recv offset addr 0x21f0a10 export exec list ptr 0x21e3060
+Dat: p_bound: Rank 5 export remote info --- other rank: 15, receive_offset:       0 at recv offset addr 0x21f0a18 export exec list ptr 0x21e3060
+Dat:     p_q: Rank 5 export remote info --- other rank: 4, receive_offset:   29072 at recv offset addr 0x23af580 export exec list ptr 0x6260c20
+Dat:     p_q: Rank 5 export remote info --- other rank: 6, receive_offset:     304 at recv offset addr 0x23af588 export exec list ptr 0x6260c20
+Dat:  p_qold: Rank 5 export remote info --- other rank: 4, receive_offset:   69936 at recv offset addr 0x21f6ff0 export exec list ptr 0x6260c20
+Dat:  p_qold: Rank 5 export remote info --- other rank: 6, receive_offset:   41168 at recv offset addr 0x21f6ff8 export exec list ptr 0x6260c20
+Dat:   p_adt: Rank 5 export remote info --- other rank: 4, receive_offset:   89224 at recv offset addr 0x21f0f70 export exec list ptr 0x6260c20
+Dat:   p_adt: Rank 5 export remote info --- other rank: 6, receive_offset:   82032 at recv offset addr 0x21f0f78 export exec list ptr 0x6260c20
+Dat:   p_res: Rank 5 export remote info --- other rank: 4, receive_offset:  121016 at recv offset addr 0x648ca20 export exec list ptr 0x6260c20
+Dat:   p_res: Rank 5 export remote info --- other rank: 6, receive_offset:   92248 at recv offset addr 0x648ca28 export exec list ptr 0x6260c20
+Passed end barrier
+Rank 5 segment sizes:
+ - EEH: 117816b 
+ - ENH 179976b 
+ - IEH 133016b 
+ - INH 176272b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 14 export remote info --- other rank: 4, receive_offset:     152 at recv offset addr 0x959b580 export exec list ptr 0x11f9060
+Dat: p_bound: Rank 14 export remote info --- other rank: 5, receive_offset:     156 at recv offset addr 0x959b588 export exec list ptr 0x11f9060
+Dat: p_bound: Rank 14 export remote info --- other rank: 6, receive_offset:     152 at recv offset addr 0x959b590 export exec list ptr 0x11f9060
+Dat: p_bound: Rank 14 export remote info --- other rank: 7, receive_offset:     156 at recv offset addr 0x959b598 export exec list ptr 0x11f9060
+Dat: p_bound: Rank 14 export remote info --- other rank: 8, receive_offset:     156 at recv offset addr 0x959b5a0 export exec list ptr 0x11f9060
+Dat: p_bound: Rank 14 export remote info --- other rank: 9, receive_offset:     256 at recv offset addr 0x959b5a8 export exec list ptr 0x11f9060
+Dat:     p_q: Rank 14 export remote info --- other rank: 13, receive_offset:    7324 at recv offset addr 0x4aa8920 export exec list ptr 0x3a63f60
+Dat:     p_q: Rank 14 export remote info --- other rank: 15, receive_offset:    5100 at recv offset addr 0x4aa8928 export exec list ptr 0x3a63f60
+Dat:  p_qold: Rank 14 export remote info --- other rank: 13, receive_offset:   48156 at recv offset addr 0x480a3d0 export exec list ptr 0x3a63f60
+Dat:  p_qold: Rank 14 export remote info --- other rank: 15, receive_offset:    7500 at recv offset addr 0x480a3d8 export exec list ptr 0x3a63f60
+Dat:   p_adt: Rank 14 export remote info --- other rank: 13, receive_offset:   83612 at recv offset addr 0x8f31fe0 export exec list ptr 0x3a63f60
+Dat:   p_adt: Rank 14 export remote info --- other rank: 15, receive_offset:    9900 at recv offset addr 0x8f31fe8 export exec list ptr 0x3a63f60
+Dat:   p_res: Rank 14 export remote info --- other rank: 13, receive_offset:   99196 at recv offset addr 0x94647e0 export exec list ptr 0x3a63f60
+Dat:   p_res: Rank 14 export remote info --- other rank: 15, receive_offset:   10500 at recv offset addr 0x94647e8 export exec list ptr 0x3a63f60
+Passed end barrier
+Rank 14 segment sizes:
+ - EEH: 117928b 
+ - ENH 187856b 
+ - IEH 132912b 
+ - INH 182880b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 1 export remote info --- other rank: 0, receive_offset:       0 at recv offset addr 0x51d1850 export exec list ptr 0x1c22060
+Dat:     p_q: Rank 1 export remote info --- other rank: 0, receive_offset:    1200 at recv offset addr 0x51c99f0 export exec list ptr 0x2484fc0
+Dat:     p_q: Rank 1 export remote info --- other rank: 2, receive_offset:     152 at recv offset addr 0x51c99f8 export exec list ptr 0x2484fc0
+Dat:  p_qold: Rank 1 export remote info --- other rank: 0, receive_offset:    3632 at recv offset addr 0x51c9b10 export exec list ptr 0x2484fc0
+Dat:  p_qold: Rank 1 export remote info --- other rank: 2, receive_offset:   41016 at recv offset addr 0x51c9b18 export exec list ptr 0x2484fc0
+Dat:   p_adt: Rank 1 export remote info --- other rank: 0, receive_offset:    6064 at recv offset addr 0x51c9b50 export exec list ptr 0x2484fc0
+Dat:   p_adt: Rank 1 export remote info --- other rank: 2, receive_offset:   81880 at recv offset addr 0x51c9b58 export exec list ptr 0x2484fc0
+Dat:   p_res: Rank 1 export remote info --- other rank: 0, receive_offset:    6672 at recv offset addr 0x51d0ed0 export exec list ptr 0x2484fc0
+Dat:   p_res: Rank 1 export remote info --- other rank: 2, receive_offset:   92096 at recv offset addr 0x51d0ed8 export exec list ptr 0x2484fc0
+Passed end barrier
+Rank 1 segment sizes:
+ - EEH: 117804b 
+ - ENH 179856b 
+ - IEH 133016b 
+ - INH 176376b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 15 export remote info --- other rank: 0, receive_offset:    1048 at recv offset addr 0x149cde0 export exec list ptr 0x35f95e0
+Dat: p_bound: Rank 15 export remote info --- other rank: 1, receive_offset:     156 at recv offset addr 0x149cde8 export exec list ptr 0x35f95e0
+Dat: p_bound: Rank 15 export remote info --- other rank: 2, receive_offset:       0 at recv offset addr 0x149cdf0 export exec list ptr 0x35f95e0
+Dat: p_bound: Rank 15 export remote info --- other rank: 3, receive_offset:      56 at recv offset addr 0x149cdf8 export exec list ptr 0x35f95e0
+Dat: p_bound: Rank 15 export remote info --- other rank: 4, receive_offset:     204 at recv offset addr 0x149ce00 export exec list ptr 0x35f95e0
+Dat:     p_q: Rank 15 export remote info --- other rank: 14, receive_offset:    5080 at recv offset addr 0x51ea490 export exec list ptr 0x51eaef0
+Dat:  p_qold: Rank 15 export remote info --- other rank: 14, receive_offset:   45880 at recv offset addr 0x9e1ff00 export exec list ptr 0x51eaef0
+Dat:   p_adt: Rank 15 export remote info --- other rank: 14, receive_offset:   83104 at recv offset addr 0x9e1fec0 export exec list ptr 0x51eaef0
+Dat:   p_res: Rank 15 export remote info --- other rank: 14, receive_offset:   96880 at recv offset addr 0x14a4c10 export exec list ptr 0x51eaef0
+Passed end barrier
+Rank 15 segment sizes:
+ - EEH: 117820b 
+ - ENH 179816b 
+ - IEH 12900b 
+ - INH 165232b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 13 export remote info --- other rank: 9, receive_offset:     152 at recv offset addr 0x87394d0 export exec list ptr 0x1110990
+Dat: p_bound: Rank 13 export remote info --- other rank: 10, receive_offset:     156 at recv offset addr 0x87394d8 export exec list ptr 0x1110990
+Dat: p_bound: Rank 13 export remote info --- other rank: 11, receive_offset:     152 at recv offset addr 0x87394e0 export exec list ptr 0x1110990
+Dat: p_bound: Rank 13 export remote info --- other rank: 12, receive_offset:     156 at recv offset addr 0x87394e8 export exec list ptr 0x1110990
+Dat:     p_q: Rank 13 export remote info --- other rank: 12, receive_offset:    9848 at recv offset addr 0x8746560 export exec list ptr 0x1110ac0
+Dat:     p_q: Rank 13 export remote info --- other rank: 14, receive_offset:     312 at recv offset addr 0x8746568 export exec list ptr 0x1110ac0
+Dat:  p_qold: Rank 13 export remote info --- other rank: 12, receive_offset:   50648 at recv offset addr 0x8746850 export exec list ptr 0x1110ac0
+Dat:  p_qold: Rank 13 export remote info --- other rank: 14, receive_offset:   41112 at recv offset addr 0x8746858 export exec list ptr 0x1110ac0
+Dat:   p_adt: Rank 13 export remote info --- other rank: 12, receive_offset:   84296 at recv offset addr 0x8f79360 export exec list ptr 0x1110ac0
+Dat:   p_adt: Rank 13 export remote info --- other rank: 14, receive_offset:   81912 at recv offset addr 0x8f79368 export exec list ptr 0x1110ac0
+Dat:   p_res: Rank 13 export remote info --- other rank: 12, receive_offset:  101648 at recv offset addr 0x8746fe0 export exec list ptr 0x1110ac0
+Dat:   p_res: Rank 13 export remote info --- other rank: 14, receive_offset:   92112 at recv offset addr 0x8746fe8 export exec list ptr 0x1110ac0
+Passed end barrier
+Rank 13 segment sizes:
+ - EEH: 117672b 
+ - ENH 181920b 
+ - IEH 132860b 
+ - INH 176616b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 3 export remote info --- other rank: 4, receive_offset:       0 at recv offset addr 0x46e3870 export exec list ptr 0x3474a00
+Dat: p_bound: Rank 3 export remote info --- other rank: 5, receive_offset:       0 at recv offset addr 0x46e3878 export exec list ptr 0x3474a00
+Dat: p_bound: Rank 3 export remote info --- other rank: 6, receive_offset:       0 at recv offset addr 0x46e3880 export exec list ptr 0x3474a00
+Dat: p_bound: Rank 3 export remote info --- other rank: 7, receive_offset:       0 at recv offset addr 0x46e3888 export exec list ptr 0x3474a00
+Dat: p_bound: Rank 3 export remote info --- other rank: 8, receive_offset:       0 at recv offset addr 0x46e3890 export exec list ptr 0x3474a00
+Dat:     p_q: Rank 3 export remote info --- other rank: 2, receive_offset:   33752 at recv offset addr 0x2f48330 export exec list ptr 0x3474b30
+Dat:     p_q: Rank 3 export remote info --- other rank: 4, receive_offset:     304 at recv offset addr 0x2f48338 export exec list ptr 0x3474b30
+Dat:  p_qold: Rank 3 export remote info --- other rank: 2, receive_offset:   74616 at recv offset addr 0x46e39d0 export exec list ptr 0x3474b30
+Dat:  p_qold: Rank 3 export remote info --- other rank: 4, receive_offset:   41168 at recv offset addr 0x46e39d8 export exec list ptr 0x3474b30
+Dat:   p_adt: Rank 3 export remote info --- other rank: 2, receive_offset:   90280 at recv offset addr 0x46e3b50 export exec list ptr 0x3474b30
+Dat:   p_adt: Rank 3 export remote info --- other rank: 4, receive_offset:   82032 at recv offset addr 0x46e3b58 export exec list ptr 0x3474b30
+Dat:   p_res: Rank 3 export remote info --- other rank: 2, receive_offset:  125696 at recv offset addr 0x4d38cb0 export exec list ptr 0x3474b30
+Dat:   p_res: Rank 3 export remote info --- other rank: 4, receive_offset:   92248 at recv offset addr 0x4d38cb8 export exec list ptr 0x3474b30
+Passed end barrier
+Rank 3 segment sizes:
+ - EEH: 117724b 
+ - ENH 176872b 
+ - IEH 132916b 
+ - INH 173256b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 12 export remote info --- other rank: 13, receive_offset:     152 at recv offset addr 0x293c760 export exec list ptr 0x27b2060
+Dat: p_bound: Rank 12 export remote info --- other rank: 14, receive_offset:     156 at recv offset addr 0x293c768 export exec list ptr 0x27b2060
+Dat: p_bound: Rank 12 export remote info --- other rank: 15, receive_offset:    4552 at recv offset addr 0x293c770 export exec list ptr 0x27b2060
+Dat:     p_q: Rank 12 export remote info --- other rank: 11, receive_offset:   12240 at recv offset addr 0x293cb50 export exec list ptr 0x516d7e0
+Dat:     p_q: Rank 12 export remote info --- other rank: 13, receive_offset:     156 at recv offset addr 0x293cb58 export exec list ptr 0x516d7e0
+Dat:  p_qold: Rank 12 export remote info --- other rank: 11, receive_offset:   53072 at recv offset addr 0x4485190 export exec list ptr 0x516d7e0
+Dat:  p_qold: Rank 12 export remote info --- other rank: 13, receive_offset:   40988 at recv offset addr 0x4485198 export exec list ptr 0x516d7e0
+Dat:   p_adt: Rank 12 export remote info --- other rank: 11, receive_offset:   84952 at recv offset addr 0x4485260 export exec list ptr 0x516d7e0
+Dat:   p_adt: Rank 12 export remote info --- other rank: 13, receive_offset:   81820 at recv offset addr 0x4485268 export exec list ptr 0x516d7e0
+Dat:   p_res: Rank 12 export remote info --- other rank: 11, receive_offset:  104112 at recv offset addr 0x4485330 export exec list ptr 0x516d7e0
+Dat:   p_res: Rank 12 export remote info --- other rank: 13, receive_offset:   92028 at recv offset addr 0x4485338 export exec list ptr 0x516d7e0
+Passed end barrier
+Rank 12 segment sizes:
+ - EEH: 117916b 
+ - ENH 184568b 
+ - IEH 132912b 
+ - INH 179592b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 8 export remote info --- other rank: 15, receive_offset:    1752 at recv offset addr 0x37ffe20 export exec list ptr 0x27fffb0
+Dat:     p_q: Rank 8 export remote info --- other rank: 7, receive_offset:   21816 at recv offset addr 0x7d04120 export exec list ptr 0x3698ef0
+Dat:     p_q: Rank 8 export remote info --- other rank: 9, receive_offset:     304 at recv offset addr 0x7d04128 export exec list ptr 0x3698ef0
+Dat:  p_qold: Rank 8 export remote info --- other rank: 7, receive_offset:   62648 at recv offset addr 0x7d041d0 export exec list ptr 0x3698ef0
+Dat:  p_qold: Rank 8 export remote info --- other rank: 9, receive_offset:   41136 at recv offset addr 0x7d041d8 export exec list ptr 0x3698ef0
+Dat:   p_adt: Rank 8 export remote info --- other rank: 7, receive_offset:   87352 at recv offset addr 0x7d042b0 export exec list ptr 0x3698ef0
+Dat:   p_adt: Rank 8 export remote info --- other rank: 9, receive_offset:   81968 at recv offset addr 0x7d042b8 export exec list ptr 0x3698ef0
+Dat:   p_res: Rank 8 export remote info --- other rank: 7, receive_offset:  113688 at recv offset addr 0x7d043c0 export exec list ptr 0x3698ef0
+Dat:   p_res: Rank 8 export remote info --- other rank: 9, receive_offset:   92176 at recv offset addr 0x7d043c8 export exec list ptr 0x3698ef0
+Passed end barrier
+Rank 8 segment sizes:
+ - EEH: 117804b 
+ - ENH 179992b 
+ - IEH 133016b 
+ - INH 176376b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 4 export remote info --- other rank: 8, receive_offset:       4 at recv offset addr 0x68cc340 export exec list ptr 0x2722060
+Dat: p_bound: Rank 4 export remote info --- other rank: 9, receive_offset:       0 at recv offset addr 0x68cc348 export exec list ptr 0x2722060
+Dat: p_bound: Rank 4 export remote info --- other rank: 10, receive_offset:       0 at recv offset addr 0x68cc350 export exec list ptr 0x2722060
+Dat: p_bound: Rank 4 export remote info --- other rank: 11, receive_offset:       0 at recv offset addr 0x68cc358 export exec list ptr 0x2722060
+Dat: p_bound: Rank 4 export remote info --- other rank: 12, receive_offset:       0 at recv offset addr 0x68cc360 export exec list ptr 0x2722060
+Dat:     p_q: Rank 4 export remote info --- other rank: 3, receive_offset:   31380 at recv offset addr 0x268a750 export exec list ptr 0x611e780
+Dat:     p_q: Rank 4 export remote info --- other rank: 5, receive_offset:     312 at recv offset addr 0x268a758 export exec list ptr 0x611e780
+Dat:  p_qold: Rank 4 export remote info --- other rank: 3, receive_offset:   72212 at recv offset addr 0x272fa50 export exec list ptr 0x611e780
+Dat:  p_qold: Rank 4 export remote info --- other rank: 5, receive_offset:   41144 at recv offset addr 0x272fa58 export exec list ptr 0x611e780
+Dat:   p_adt: Rank 4 export remote info --- other rank: 3, receive_offset:   89668 at recv offset addr 0x69e2000 export exec list ptr 0x611e780
+Dat:   p_adt: Rank 4 export remote info --- other rank: 5, receive_offset:   81976 at recv offset addr 0x69e2008 export exec list ptr 0x611e780
+Dat:   p_res: Rank 4 export remote info --- other rank: 3, receive_offset:  123252 at recv offset addr 0x272ffc0 export exec list ptr 0x611e780
+Dat:   p_res: Rank 4 export remote info --- other rank: 5, receive_offset:   92184 at recv offset addr 0x272ffc8 export exec list ptr 0x611e780
+Passed end barrier
+Rank 4 segment sizes:
+ - EEH: 117716b 
+ - ENH 179944b 
+ - IEH 133112b 
+ - INH 176272b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 6 export remote info --- other rank: 15, receive_offset:     352 at recv offset addr 0x275a750 export exec list ptr 0x27f2060
+Dat:     p_q: Rank 6 export remote info --- other rank: 5, receive_offset:   26648 at recv offset addr 0x27ffff0 export exec list ptr 0x5189600
+Dat:     p_q: Rank 6 export remote info --- other rank: 7, receive_offset:     312 at recv offset addr 0x27ffff8 export exec list ptr 0x5189600
+Dat:  p_qold: Rank 6 export remote info --- other rank: 5, receive_offset:   67480 at recv offset addr 0x2803f90 export exec list ptr 0x5189600
+Dat:  p_qold: Rank 6 export remote info --- other rank: 7, receive_offset:   41144 at recv offset addr 0x2803f98 export exec list ptr 0x5189600
+Dat:   p_adt: Rank 6 export remote info --- other rank: 5, receive_offset:   88560 at recv offset addr 0x29be190 export exec list ptr 0x5189600
+Dat:   p_adt: Rank 6 export remote info --- other rank: 7, receive_offset:   81976 at recv offset addr 0x29be198 export exec list ptr 0x5189600
+Dat:   p_res: Rank 6 export remote info --- other rank: 5, receive_offset:  118520 at recv offset addr 0x29be250 export exec list ptr 0x5189600
+Dat:   p_res: Rank 6 export remote info --- other rank: 7, receive_offset:   92184 at recv offset addr 0x29be258 export exec list ptr 0x5189600
+Passed end barrier
+Rank 6 segment sizes:
+ - EEH: 117700b 
+ - ENH 180048b 
+ - IEH 133112b 
+ - INH 176272b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 2 export remote info --- other rank: 0, receive_offset:     700 at recv offset addr 0x18a7e10 export exec list ptr 0x2129900
+Dat: p_bound: Rank 2 export remote info --- other rank: 1, receive_offset:       0 at recv offset addr 0x18a7e18 export exec list ptr 0x2129900
+Dat: p_bound: Rank 2 export remote info --- other rank: 3, receive_offset:       0 at recv offset addr 0x18a7e20 export exec list ptr 0x2129900
+Dat:     p_q: Rank 2 export remote info --- other rank: 1, receive_offset:   36312 at recv offset addr 0x49b6b90 export exec list ptr 0x2129a30
+Dat:     p_q: Rank 2 export remote info --- other rank: 3, receive_offset:     212 at recv offset addr 0x49b6b98 export exec list ptr 0x2129a30
+Dat:  p_qold: Rank 2 export remote info --- other rank: 1, receive_offset:   77144 at recv offset addr 0x21ffc80 export exec list ptr 0x2129a30
+Dat:  p_qold: Rank 2 export remote info --- other rank: 3, receive_offset:   41044 at recv offset addr 0x21ffc88 export exec list ptr 0x2129a30
+Dat:   p_adt: Rank 2 export remote info --- other rank: 1, receive_offset:   90976 at recv offset addr 0x21ffd50 export exec list ptr 0x2129a30
+Dat:   p_adt: Rank 2 export remote info --- other rank: 3, receive_offset:   81876 at recv offset addr 0x21ffd58 export exec list ptr 0x2129a30
+Dat:   p_res: Rank 2 export remote info --- other rank: 1, receive_offset:  128184 at recv offset addr 0x21ffe50 export exec list ptr 0x2129a30
+Dat:   p_res: Rank 2 export remote info --- other rank: 3, receive_offset:   92084 at recv offset addr 0x21ffe58 export exec list ptr 0x2129a30
+Passed end barrier
+Rank 2 segment sizes:
+ - EEH: 117560b 
+ - ENH 175608b 
+ - IEH 132960b 
+ - INH 171608b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 10 export remote info --- other rank: 15, receive_offset:    3152 at recv offset addr 0x1365a50 export exec list ptr 0x1358060
+Dat:     p_q: Rank 10 export remote info --- other rank: 9, receive_offset:   17008 at recv offset addr 0x7681a70 export exec list ptr 0x5092c50
+Dat:     p_q: Rank 10 export remote info --- other rank: 11, receive_offset:     304 at recv offset addr 0x7681a78 export exec list ptr 0x5092c50
+Dat:  p_qold: Rank 10 export remote info --- other rank: 9, receive_offset:   57840 at recv offset addr 0x7681ad0 export exec list ptr 0x5092c50
+Dat:  p_qold: Rank 10 export remote info --- other rank: 11, receive_offset:   41136 at recv offset addr 0x7681ad8 export exec list ptr 0x5092c50
+Dat:   p_adt: Rank 10 export remote info --- other rank: 9, receive_offset:   86144 at recv offset addr 0x13697c0 export exec list ptr 0x5092c50
+Dat:   p_adt: Rank 10 export remote info --- other rank: 11, receive_offset:   81968 at recv offset addr 0x13697c8 export exec list ptr 0x5092c50
+Dat:   p_res: Rank 10 export remote info --- other rank: 9, receive_offset:  108880 at recv offset addr 0x1369880 export exec list ptr 0x5092c50
+Dat:   p_res: Rank 10 export remote info --- other rank: 11, receive_offset:   92176 at recv offset addr 0x1369888 export exec list ptr 0x5092c50
+Passed end barrier
+Rank 10 segment sizes:
+ - EEH: 117908b 
+ - ENH 181472b 
+ - IEH 132912b 
+ - INH 176496b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 11 export remote info --- other rank: 15, receive_offset:    3852 at recv offset addr 0x22b8ab0 export exec list ptr 0x22ab060
+Dat:     p_q: Rank 11 export remote info --- other rank: 10, receive_offset:   14616 at recv offset addr 0x22b6ff0 export exec list ptr 0x47d75e0
+Dat:     p_q: Rank 11 export remote info --- other rank: 12, receive_offset:     312 at recv offset addr 0x22b6ff8 export exec list ptr 0x47d75e0
+Dat:  p_qold: Rank 11 export remote info --- other rank: 10, receive_offset:   55416 at recv offset addr 0x58bb050 export exec list ptr 0x47d75e0
+Dat:  p_qold: Rank 11 export remote info --- other rank: 12, receive_offset:   41112 at recv offset addr 0x58bb058 export exec list ptr 0x47d75e0
+Dat:   p_adt: Rank 11 export remote info --- other rank: 10, receive_offset:   85488 at recv offset addr 0x58bb160 export exec list ptr 0x47d75e0
+Dat:   p_adt: Rank 11 export remote info --- other rank: 12, receive_offset:   81912 at recv offset addr 0x58bb168 export exec list ptr 0x47d75e0
+Dat:   p_res: Rank 11 export remote info --- other rank: 10, receive_offset:  106416 at recv offset addr 0x58bb270 export exec list ptr 0x47d75e0
+Dat:   p_res: Rank 11 export remote info --- other rank: 12, receive_offset:   92112 at recv offset addr 0x58bb278 export exec list ptr 0x47d75e0
+Passed end barrier
+Rank 11 segment sizes:
+ - EEH: 117804b 
+ - ENH 183160b 
+ - IEH 133008b 
+ - INH 177976b 
+ - MSC 1048576b 
+Dat: p_bound: Rank 9 export remote info --- other rank: 15, receive_offset:    2452 at recv offset addr 0x1d7ff00 export exec list ptr 0x1d72060
+Dat:     p_q: Rank 9 export remote info --- other rank: 8, receive_offset:   19416 at recv offset addr 0x7ed8370 export exec list ptr 0x2442f90
+Dat:     p_q: Rank 9 export remote info --- other rank: 10, receive_offset:     312 at recv offset addr 0x7ed8378 export exec list ptr 0x2442f90
+Dat:  p_qold: Rank 9 export remote info --- other rank: 8, receive_offset:   60248 at recv offset addr 0x1d83e30 export exec list ptr 0x2442f90
+Dat:  p_qold: Rank 9 export remote info --- other rank: 10, receive_offset:   41112 at recv offset addr 0x1d83e38 export exec list ptr 0x2442f90
+Dat:   p_adt: Rank 9 export remote info --- other rank: 8, receive_offset:   86752 at recv offset addr 0x1d83ef0 export exec list ptr 0x2442f90
+Dat:   p_adt: Rank 9 export remote info --- other rank: 10, receive_offset:   81912 at recv offset addr 0x1d83ef8 export exec list ptr 0x2442f90
+Dat:   p_res: Rank 9 export remote info --- other rank: 8, receive_offset:  111288 at recv offset addr 0x1d83fb0 export exec list ptr 0x2442f90
+Dat:   p_res: Rank 9 export remote info --- other rank: 10, receive_offset:   92112 at recv offset addr 0x1d83fb8 export exec list ptr 0x2442f90
+Passed end barrier
+Rank 9 segment sizes:
+ - EEH: 117804b 
+ - ENH 179976b 
+ - IEH 133008b 
+ - INH 176376b 
+ - MSC 1048576b 
+proc 0 finished GPI initialisation.
+after partition!
+proc 2 finished GPI initialisation.
+after partition!
+proc 3 finished GPI initialisation.
+after partition!
+proc 1 finished GPI initialisation.
+after partition!
+proc 15 finished GPI initialisation.
+after partition!
+proc 8 finished GPI initialisation.
+after partition!
+proc 13 finished GPI initialisation.
+after partition!
+proc 9 finished GPI initialisation.
+after partition!
+proc 7 finished GPI initialisation.
+after partition!
+proc 5 finished GPI initialisation.
+after partition!
+proc 6 finished GPI initialisation.
+after partition!
+proc 11 finished GPI initialisation.
+after partition!
+proc 4 finished GPI initialisation.
+after partition!
+proc 14 finished GPI initialisation.
+after partition!
+proc 12 finished GPI initialisation.
+after partition!
+proc 10 finished GPI initialisation.
+after partition!
+On rank 6: function gaspi_notify_waitsome(INH_SEGMENT_ID, dat->index<<7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (348) timed out.
+On rank 11: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 4: function gaspi_notify_waitsome(INH_SEGMENT_ID, dat->index<<7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (348) timed out.
+On rank 14: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 12: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 10: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 15: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 8: function gaspi_notify_waitsome(INH_SEGMENT_ID, dat->index<<7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (348) timed out.
+On rank 13: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 9: function gaspi_notify_waitsome(IEH_SEGMENT_ID, dat->index << 7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (256) timed out.
+On rank 7: function gaspi_notify_waitsome(INH_SEGMENT_ID, dat->index<<7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (348) timed out.
+On rank 5: function gaspi_notify_waitsome(INH_SEGMENT_ID, dat->index<<7, 10, &notif_id, GPI_TIMEOUT) at src/gpi/op_gpi_rt_support.cpp (348) timed out.
+On rank 0: function gaspi_allreduce( send_data, (gaspi_pointer_t) receive, (gaspi_number_t) arg->dim, operation, GASPI_TYPE_DOUBLE, GASPI_GROUP_ALL, GPI_TIMEOUT ) at src/gpi/op_gpi_core.cpp (532) timed out.
+On rank 1: function gaspi_allreduce( send_data, (gaspi_pointer_t) receive, (gaspi_number_t) arg->dim, operation, GASPI_TYPE_DOUBLE, GASPI_GROUP_ALL, GPI_TIMEOUT ) at src/gpi/op_gpi_core.cpp (532) timed out.
+On rank 3: function gaspi_allreduce( send_data, (gaspi_pointer_t) receive, (gaspi_number_t) arg->dim, operation, GASPI_TYPE_DOUBLE, GASPI_GROUP_ALL, GPI_TIMEOUT ) at src/gpi/op_gpi_core.cpp (532) timed out.
+On rank 2: function gaspi_allreduce( send_data, (gaspi_pointer_t) receive, (gaspi_number_t) arg->dim, operation, GASPI_TYPE_DOUBLE, GASPI_GROUP_ALL, GPI_TIMEOUT ) at src/gpi/op_gpi_core.cpp (532) timed out.
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 15 in communicator MPI_COMM_WORLD
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
+[node067.avon.hpc:2081631] PMIX ERROR: UNREACHABLE in file server/pmix_server.c at line 2193
+[node067.avon.hpc:2081631] 15 more processes have sent help message help-mpi-api.txt / mpi-abort
+[node067.avon.hpc:2081631] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages

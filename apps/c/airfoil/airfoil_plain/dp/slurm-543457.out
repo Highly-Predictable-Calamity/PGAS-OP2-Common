@@ -1,0 +1,20 @@
+Sanity check
+Sanity check
+Sanity check
+Sanity check
+On rank 0: function gaspi_proc_init(GPI_TIMEOUT*4) at src/mpi/op_mpi_decl.cpp (93) returned GASPI_ERROR.
+On rank 0: function gaspi_proc_init(GPI_TIMEOUT*4) at src/mpi/op_mpi_decl.cpp (93) returned GASPI_ERROR.
+Parsed machine file
+Parsed machine file
+Parsed machine file
+On rank 0: function gaspi_proc_init(GPI_TIMEOUT*4) at src/mpi/op_mpi_decl.cpp (93) returned GASPI_ERROR.
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+Parsed machine file
+Broadcasted topology
+--------------------------------------------------------------------------
+mpirun noticed that process rank 1 with PID 76946 on node node070 exited on signal 16 (Stack fault).
+--------------------------------------------------------------------------
+3 total processes killed (some possibly by mpirun during cleanup)
