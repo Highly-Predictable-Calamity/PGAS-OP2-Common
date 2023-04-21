@@ -341,7 +341,8 @@ void op_mpi_wait_all_grouped(int nargs, op_arg *args, int device);
 * Core GPI lib function prototypes
 *******************************************************************************/
 
-int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args);
+int op_gpi_halo_exchanges_prep(op_set set, int nargs, op_arg *args);
+int op_gpi_halo_exchanges_send(op_set set, int nargs, op_arg *args);
 
 void op_gpi_reduce_combined(op_arg *args, int nargs);
 

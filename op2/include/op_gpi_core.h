@@ -55,7 +55,8 @@ typedef op_gpi_buffer_core *op_gpi_buffer;
 * Core GPI lib function prototypes
 *******************************************************************************/
 
-void op_gpi_exchange_halo(op_arg *arg, int exec_flag);
+void op_gpi_exchange_halo_prep(op_arg *arg, int exec_flag);
+void op_gpi_exchange_halo_send(op_arg *arg, int exec_flag);
 
 void op_gpi_exchange_halo_partial(op_arg *arg, int exec_flag);
 

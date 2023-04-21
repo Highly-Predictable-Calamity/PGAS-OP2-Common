@@ -37,7 +37,6 @@ int bit_count(void *data, int size){
     return sum;
 }
 
-
 int xor_byte_summation(void *data, int size){
     char *d = (char*) data;
     char res=d[0];
@@ -52,7 +51,7 @@ int xor_byte_summation(void *data, int size){
  * Lots of this is common, so can be put there. 
  * TODO checks are required to ensure the offsets are correct within the segments.
 */
-void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
+void op_gpi_exchange_halo_prep(op_arg *arg, int exec_flag){
     op_dat dat = arg->dat;
     op_gpi_buffer gpi_buf = (op_gpi_buffer) dat->gpi_buffer;
 
@@ -126,29 +125,6 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
         memcpy(((void*)dat_offset_addr + exp_exec_list->disps[i]* dat->size + j* dat->size),
                (void *)&dat->data[dat->size * (set_elem_index)], dat->size);
       }
-
-
-      //get remote offsets for that rank
-      gaspi_offset_t remote_exec_offset = (gaspi_offset_t) gpi_buf->remote_exec_offsets[i];
-      
-      //printf("Dat: %s: Rank %d sending %d bytes of exec data to rank %d with remote segment offset %d\n",dat->name, gpi_rank, dat->size * exp_exec_list->sizes[i], exp_exec_list->ranks[i], remote_exec_offset);
-
-      gaspi_offset_t local_offset = (gaspi_offset_t) dat->loc_eeh_seg_off+ exp_exec_list->disps[i]*dat->size;
-      GPI_QUEUE_SAFE( gaspi_write_notify(EEH_SEGMENT_ID, /* local segment id*/
-                        local_offset, /* local segment offset*/
-                        exp_exec_list->ranks[i], /* remote rank*/
-                        IEH_SEGMENT_ID, /* remote segment id*/
-                        remote_exec_offset, /* remote offset*/
-                        dat->size * exp_exec_list->sizes[i], /* send size*/
-                        dat->index <<7 | gpi_rank, /* notification id*/
-                        1, /* notification value, 1 bit added for non-zero notif values */
-                        OP2_GPI_QUEUE_ID, /* queue id*/
-                        GPI_TIMEOUT /* timeout*/
-                        ), OP2_GPI_QUEUE_ID )
-#ifdef GPI_VERBOSE
-      printf("Rank %d sent execute %s dat data to rank %d with not_ID %d \n",gpi_rank,dat->name, exp_exec_list->ranks[i],dat->index <<7 | gpi_rank);
-      fflush(stdout);
-#endif
     }
 
 
@@ -172,7 +148,97 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                     dat->size);
 
         }
-        
+    }
+
+}
+
+void op_gpi_exchange_halo_send(op_arg *arg, int exec_flag){
+    op_dat dat = arg->dat;
+    op_gpi_buffer gpi_buf = (op_gpi_buffer) dat->gpi_buffer;
+
+    //If it's not in use, don't bother!
+    if(arg->opt ==0)
+        return;
+
+    //Check if arg already sent
+    if(arg->sent ==1){
+        GPI_FAIL("Error: halo exchange already in flight for dat %s\n",dat->name);
+    }
+
+    // For a directly accessed op_dat do not do halo exchanges if not executing
+    // over
+    // redundant compute block
+    if(exec_flag == 0 && arg->idx == -1)
+        return;
+
+
+    // need to exchange both direct and indirect data sets if they're dirty
+    // return if not R/RW or if not dirty.
+    if(!(arg->acc == OP_READ || arg->acc == OP_RW) 
+        || (dat->dirtybit !=1))
+            return;
+    
+
+
+    //Grab the halo lists
+    halo_list imp_exec_list = OP_import_exec_list[dat->set->index];
+    halo_list imp_nonexec_list = OP_import_nonexec_list[dat->set->index];
+
+    halo_list exp_exec_list = OP_export_exec_list[dat->set->index];
+    halo_list exp_nonexec_list = OP_export_nonexec_list[dat->set->index];
+
+    int gpi_rank;
+    gaspi_proc_rank((gaspi_rank_t*)&gpi_rank);
+
+
+
+    //sanity checks
+    if (compare_sets(imp_exec_list->set, dat->set) == 0 ){
+        GPI_FAIL("Import list and set mismatch\n");
+    }
+    if (compare_sets(exp_exec_list->set, dat->set) == 0 ){
+        GPI_FAIL("Export list and set mismatch\n");
+    }
+
+    //dat offset inside eeh segment
+    //Note - changed to int to not perform addition on pointer type
+    // and simplifies offset logic as operations are now performed on byte count.
+    void *dat_offset_addr = (void*)(eeh_segment_ptr + dat->loc_eeh_seg_off);
+
+    int set_elem_index;
+    for (int i = 0; i < exp_exec_list->ranks_size; i++) {
+      //get remote offsets for that rank
+      gaspi_offset_t remote_exec_offset = (gaspi_offset_t) gpi_buf->remote_exec_offsets[i];
+      
+      //printf("Dat: %s: Rank %d sending %d bytes of exec data to rank %d with remote segment offset %d\n",dat->name, gpi_rank, dat->size * exp_exec_list->sizes[i], exp_exec_list->ranks[i], remote_exec_offset);
+
+      gaspi_offset_t local_offset = (gaspi_offset_t) dat->loc_eeh_seg_off+ exp_exec_list->disps[i]*dat->size;
+      GPI_QUEUE_SAFE( gaspi_write_notify(EEH_SEGMENT_ID, /* local segment id*/
+                        local_offset, /* local segment offset*/
+                        exp_exec_list->ranks[i], /* remote rank*/
+                        IEH_SEGMENT_ID, /* remote segment id*/
+                        remote_exec_offset, /* remote offset*/
+                        dat->size * exp_exec_list->sizes[i], /* send size*/
+                        dat->index <<7 | gpi_rank, /* notification id*/
+                        1, /* notification value, 1 bit added for non-zero notif values */
+                        OP2_GPI_QUEUE_ID, /* queue id*/
+                        GPI_TIMEOUT /* timeout*/
+                        ), OP2_GPI_QUEUE_ID )
+    }
+
+
+    //Second exchange for nonexec elements. 
+    if (compare_sets(imp_nonexec_list->set, dat->set) == 0){
+        GPI_FAIL("Error: Non-Import list and set mismatch");
+    }
+
+    if(compare_sets(exp_nonexec_list->set, dat->set) == 0){
+        GPI_FAIL("Error: Non-Export list and set mismatch");
+    }
+
+    dat_offset_addr = (void*)(enh_segment_ptr + dat->loc_enh_seg_off);
+
+    for (int i =0; i < exp_nonexec_list->ranks_size; i++){
         gaspi_offset_t remote_nonexec_offset = (gaspi_offset_t) gpi_buf->remote_nonexec_offsets[i];
 
         //fprintf(stderr,"remote offset: %ld for rank %d in segment %d\n",remote_offset, exp_nonexec_list->ranks[i], INH_SEGMENT_ID);
@@ -191,19 +257,13 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                            GPI_TIMEOUT /* timeout */
                            ), OP2_GPI_QUEUE_ID )
       
-#ifdef GPI_VERBOSE
-        printf("Rank %d sent non-execute %s dat data to rank %d with not_ID %d.\n",gpi_rank,dat->name, exp_nonexec_list->ranks[i], dat->index <<7 | gpi_rank);
-        fflush(stdout);
-#endif
     }
 
 
     //Finish up
     dat->dirtybit =0;
     arg->sent=1;
-
 }
-
 
 /* Wait for a single arg
  * equivalent to op_mpi_waitall function

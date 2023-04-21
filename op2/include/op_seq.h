@@ -109,7 +109,7 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
 
   // MPI halo exchange and dirty bit setting, if needed
 #ifdef HAVE_GPI
-  int n_upper = op_gpi_halo_exchanges(set, N, args);
+  int n_upper = op_gpi_halo_exchanges_prep(set, N, args);
 #else
   int n_upper = op_mpi_halo_exchanges(set, N, args);
 #endif /* HAVE_GPI */
@@ -120,6 +120,7 @@ void op_par_loop_impl(indices<I...>, void (*kernel)(T *...), char const *name,
   for (int n = 0; n < n_upper; n++) {
     if (n == set->core_size){
 #ifdef HAVE_GPI
+      op_gpi_halo_exchanges_send(set,N,args);
       op_gpi_waitall_args(20, args);
 #else
       op_mpi_wait_all(20, args);
