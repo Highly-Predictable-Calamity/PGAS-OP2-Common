@@ -139,9 +139,7 @@ void op__perf_comm(void *k_i, op_dat dat) {
     }
   }
 }
-#endif
 
-#ifdef COMM_PERF
 void op_perf_comms(void *k_i, int nargs, op_arg *args) {
 
   for (int n = 0; n < nargs; n++) {
