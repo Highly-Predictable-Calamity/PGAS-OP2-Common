@@ -32,6 +32,11 @@ char *inh_segment_ptr;
 
 char *msc_segment_ptr;
 
+char *eeh_heap_segment_ptr;
+char *ieh_heap_segment_ptr;
+char *enh_heap_segment_ptr;
+char *inh_heap_segment_ptr;
+
 
 /* IS_COMMON 
  * Bascially a near perfect copy of op_mpi_halo_exchanges, only 2/3 lines changed. */

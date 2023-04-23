@@ -6,6 +6,7 @@
 #include <mpi.h>
 #include <stdlib.h>
 
+
 #define LOCKSTEP(rank, ...) {\
     GPI_SAFE( gaspi_barrier(OP_GPI_GLOBAL, GPI_TIMEOUT) )\
     if(rank==0) printf(__VA_ARGS__);\
@@ -100,3 +101,18 @@
         MPI_Abort(MPI_COMM_WORLD, 1);\
     }                                   \
 
+
+
+typedef struct MemorySegmentHeader MemorySegmentHeader_t;
+
+#define segment_magic 0x87654321
+
+struct MemorySegmentHeader{
+    bool free;
+    unsigned int size;
+    MemorySegmentHeader_t* next;
+    MemorySegmentHeader_t* previous;
+    unsigned int magic;
+};
+
+MemorySegmentHeader_t *intialise_heap(void* base, void* limit);

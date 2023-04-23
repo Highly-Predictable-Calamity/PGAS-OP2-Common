@@ -48,7 +48,8 @@
 
 extern gaspi_size_t eeh_size, enh_size, ieh_size, inh_size;
 
-
+void op_gpi_setup_segments_heap();
+gaspi_offset_t op_gpi_segment_malloc(gaspi_segment_id_t  seg_id, int size);
 
 int op_gpi_buffer_setup(op_dat dat, int flags);
 

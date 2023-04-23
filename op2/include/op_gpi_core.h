@@ -16,6 +16,11 @@ extern double t1, t2, c1, c2;
 
 #define MSC_SEGMENT_ID 5
 
+#define EEH_HEAP_SEGMENT_ID 11
+#define ENH_HEAP_SEGMENT_ID 12
+#define IEH_HEAP_SEGMENT_ID 13
+#define INH_HEAP_SEGMENT_ID 14
+
 extern gaspi_group_t OP_GPI_WORLD;
 extern gaspi_group_t OP_GPI_GLOBAL;
 
@@ -28,6 +33,11 @@ extern char *enh_segment_ptr;
 extern char *inh_segment_ptr;
 
 extern char *msc_segment_ptr;
+
+extern char *eeh_heap_segment_ptr;
+extern char *ieh_heap_segment_ptr;
+extern char *enh_heap_segment_ptr;
+extern char *inh_heap_segment_ptr;
 
 /* Struct storing information regarding the expected dat elements from who, where, and where to copy to */
 typedef struct{

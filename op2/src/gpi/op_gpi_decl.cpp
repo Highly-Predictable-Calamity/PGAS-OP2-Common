@@ -12,7 +12,6 @@ extern halo_list *OP_import_nonexec_list; // INH list
 extern halo_list *OP_export_nonexec_list; // ENH list
 
 
-
 int op_gpi_buffer_setup(op_dat dat, int flags){
     //Check flags
     if(!(flags & GPI_STD_DAT || flags & GPI_HEAP_DAT)){
@@ -220,4 +219,222 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     printf("Setup GPI stuff for %s, with buff %p\n",dat->name, dat->gpi_buffer);
     fflush(stdout);
     return 0;
+}
+
+
+
+/* ------------------------------------------------------- */
+/*      BACKEND MEMORY FUNCTIONS FOR GPI SEGMENT HEAP      */
+/*         uses heap implementation taken from:            */
+/*            github.com/NickWalker1/PunchOS               */
+/* ------------------------------------------------------- */
+
+
+MemorySegmentHeader_t *eeh_seg_start;
+MemorySegmentHeader_t *enh_seg_start;
+MemorySegmentHeader_t *ieh_seg_start;
+MemorySegmentHeader_t *inh_seg_start;
+
+MemorySegmentHeader_t *intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size);
+
+/* Initialises all segments for heap gpi dat data.*/
+void op_gpi_setup_segments_heap(){
+    intialise_gpi_heap_segment(EEH_HEAP_SEGMENT_ID, GPI_HEAP_SIZE);
+    intialise_gpi_heap_segment(ENH_HEAP_SEGMENT_ID, GPI_HEAP_SIZE);
+    intialise_gpi_heap_segment(IEH_HEAP_SEGMENT_ID, GPI_HEAP_SIZE);
+    intialise_gpi_heap_segment(INH_HEAP_SEGMENT_ID, GPI_HEAP_SIZE);
+}
+
+
+/* Should not be called by the programmer. Use malloc or shr_malloc instead */
+gaspi_offset_t op_gpi_segment_malloc(gaspi_segment_id_t  seg_id,int size){
+    MemorySegmentHeader_t *currSeg;
+    char *base_addr;
+    /* Lookup start segment for each heap*/
+    switch(seg_id){
+        case EEH_HEAP_SEGMENT_ID:
+            currSeg=eeh_seg_start;
+            break;
+        case ENH_HEAP_SEGMENT_ID:
+            currSeg=enh_seg_start;
+            break;
+        case IEH_HEAP_SEGMENT_ID:
+            currSeg=ieh_seg_start;
+            break;
+        case INH_HEAP_SEGMENT_ID:
+            currSeg=inh_seg_start;
+            break;
+        default:
+            GPI_FAIL("Invalid segment ID for heap allocation.\n")
+    }
+
+    base_addr=(char*)(currSeg+1);
+
+    //traverse linked list to find one that meets conditions
+    //if at end return NULL
+    while(!currSeg->free || size > currSeg->size){
+        currSeg=currSeg->next;
+        if(!currSeg) return (gaspi_offset_t)-1;
+    }
+    /* Update the segment info */
+    uint32_t init_size =currSeg->size;
+    currSeg->size=size;
+    currSeg->free=false;
+
+    /* Quick check for heap corruption, as this should never exist that two free states are next to each other */
+    if(currSeg->next && currSeg->next->free)GPI_FAIL("Heap corruption. (Likely erronous writes)");
+
+
+    /* Check if we can fit a new header in + some bytes to ensure it's actually useful. */
+    if(init_size>sizeof(MemorySegmentHeader_t)+64){
+        MemorySegmentHeader_t* newSegment = currSeg+1;/* this should work with c struct pointer arithmetic*/
+        newSegment->free=true;
+        newSegment->magic=segment_magic;
+        newSegment->previous=currSeg;
+        newSegment->next=currSeg->next;
+        newSegment->size=init_size-sizeof(MemorySegmentHeader_t)-size;
+
+        if(currSeg->next) currSeg->next->previous=newSegment;
+        currSeg->next=newSegment;
+
+        //Make sure to return the start of the free memory space, not the space containing
+        //the header information.
+        return (gaspi_offset_t)(((char*)(++currSeg)) - base_addr);
+    }
+
+
+    //cannot fit a new segmentHeader in.
+
+    //adjust currSeg to be initial size
+    currSeg->size=init_size;
+    
+    //Make sure to return the start of the free memory space, not the space containing
+    //the header information.
+    return (gaspi_offset_t)(((char*)(++currSeg)) - base_addr);
+}
+
+/* Free the associated memory segment with addr */
+void segment_free(gaspi_segment_id_t seg_id,gaspi_offset_t offset){
+    
+    char *base_addr;
+    /* Obtain base address from segment ID*/
+    switch(seg_id){
+        case EEH_HEAP_SEGMENT_ID:
+            base_addr=eeh_segment_ptr;
+            break;
+        case ENH_HEAP_SEGMENT_ID:
+            base_addr=enh_segment_ptr;
+            break;
+        case IEH_HEAP_SEGMENT_ID:
+            base_addr=ieh_segment_ptr;
+            break;
+        case INH_HEAP_SEGMENT_ID:
+            base_addr=inh_segment_ptr;
+            break;
+        default: 
+            GPI_FAIL("Invalid segment ID to free from.\n");
+    }
+    char *addr=base_addr+(unsigned int)offset; /* lossy cast but likely okay as segments likely <4GiB*/
+
+    //Assumption made that addr is base of the free space
+    MemorySegmentHeader_t *currSeg = (MemorySegmentHeader_t*) (addr - sizeof(MemorySegmentHeader_t));
+    
+    if(currSeg->magic!=segment_magic){
+        GPI_FAIL("Attempted to free non-base address");
+        return;
+    }
+
+    //sanity check
+    if(currSeg->free) return;
+
+
+    currSeg->free=true;
+
+    //There can be at most one free block on either side. 
+    //Eg: |Free|this block|Free|another block...
+    // the case |Free|this block|Free|Free|... should never exist 
+
+    //if the previous segment exists and is free
+    if(currSeg->previous && currSeg->previous->free){
+        MemorySegmentHeader_t* prevSeg = currSeg->previous;
+
+        prevSeg->size=prevSeg->size + currSeg->size + sizeof(MemorySegmentHeader_t);        
+
+
+        //update pointers to remove currSeg from linked list.
+        prevSeg->next=currSeg->next;
+        if(currSeg->next)
+            currSeg->next->previous=prevSeg;
+
+        //for the second if
+        currSeg=prevSeg;
+    }
+
+    //if the next segment exists and is free
+    if(currSeg->next && currSeg->next->free){
+        currSeg->size=currSeg->size+currSeg->next->size + sizeof(MemorySegmentHeader_t);
+
+        //update pointers to remove the next segment
+
+        //if there is a following one
+        if(currSeg->next->next){
+            currSeg->next=currSeg->next->next;
+            currSeg->next->previous=currSeg;
+        }
+        else{
+            currSeg->next=0;
+        }
+        
+    }
+}
+
+
+/* Allocates the segment memory, binds it to GPI segment, registers with other processes, initialises heap*/
+MemorySegmentHeader_t *intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size){
+    MemorySegmentHeader_t **seg;
+    char **seg_ptr;
+    
+    switch(seg_id){
+        case EEH_HEAP_SEGMENT_ID:
+            seg=&eeh_seg_start;
+            seg_ptr=&eeh_heap_segment_ptr;
+            break;
+        case ENH_HEAP_SEGMENT_ID:
+            seg=&enh_seg_start;
+            seg_ptr=&enh_heap_segment_ptr;
+            break;
+        case IEH_HEAP_SEGMENT_ID:
+            seg=&ieh_seg_start;
+            seg_ptr=&ieh_heap_segment_ptr;
+            break;
+        case INH_HEAP_SEGMENT_ID:
+            seg=&inh_seg_start;
+            seg_ptr=&inh_heap_segment_ptr;
+            break;
+        default: 
+            GPI_FAIL("Invalid segment ID to initialise.\n")
+    }
+
+    /* allocate the segment */
+    *seg_ptr = (char*) xmalloc(size);
+    
+    int ret = gaspi_segment_use(seg_id, (gaspi_pointer_t)*seg_ptr, size, OP_GPI_WORLD, GPI_TIMEOUT, GASPI_ALLOC_DEFAULT);
+    if(ret!=0){
+        GPI_FAIL("Unable to use segment.\n")
+    }
+
+    *seg = (MemorySegmentHeader_t*)seg_ptr;
+    (*seg)->size=size;
+    (*seg)->magic=segment_magic;
+    (*seg)->next=NULL;
+    (*seg)->previous=NULL;
+    (*seg)->free=true;
+
+
+    return NULL;
+}
+
+
+gaspi_offset_t segment_malloc(gaspi_segment_id_t seg, int bytes){
+
 }
