@@ -104,14 +104,7 @@ void op_init(int argc, char **argv, int diags) {
   /* Sets up heap segments to be used by temporary dats */
   op_gpi_setup_segments_heap();
 
-  gaspi_offset_t off = op_gpi_segment_malloc(EEH_HEAP_SEGMENT_ID, 300);
-  printf("test offset %ld\n",off);
-  off = op_gpi_segment_malloc(EEH_HEAP_SEGMENT_ID, 100);
-  printf("test offset %ld\n",off);
-
   GPI_SAFE( gaspi_barrier(OP_GPI_GLOBAL,GPI_TIMEOUT) )
-  printf("after barrier!\n");
-  fflush(stdout);
 
 #endif
 

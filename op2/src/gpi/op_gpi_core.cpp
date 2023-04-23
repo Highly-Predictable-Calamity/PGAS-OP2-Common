@@ -134,6 +134,10 @@ void op_gpi_waitall_args(int nargs, op_arg *args){
 #endif
 }
 
+void op_gpi_set_dirtybit(int nargs, op_arg *args){
+  op_mpi_set_dirtybit(nargs, args);
+}
+
 void *op_gpi_perf_time(const char *name, double time){
   return (void*)NULL;
 }

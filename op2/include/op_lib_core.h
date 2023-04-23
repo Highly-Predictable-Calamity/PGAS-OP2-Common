@@ -341,6 +341,8 @@ void op_mpi_wait_all_grouped(int nargs, op_arg *args, int device);
 * Core GPI lib function prototypes
 *******************************************************************************/
 
+void op_gpi_set_dirtybit(int nargs, op_arg *args);
+
 int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args);
 
 void op_gpi_waitall_args(int nargs, op_arg *args);

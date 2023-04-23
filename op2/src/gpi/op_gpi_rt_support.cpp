@@ -47,9 +47,6 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
         || (dat->dirtybit !=1))
             return;
     
-    printf("In gpi exchange halo of %s with buf addr %p\n",dat->name, dat->gpi_buffer);
-    fflush(stdout);
-
 
     //Grab the halo lists
     halo_list imp_exec_list = OP_import_exec_list[dat->set->index];
@@ -74,7 +71,13 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
     //dat offset inside eeh segment
     //Note - changed to int to not perform addition on pointer type
     // and simplifies offset logic as operations are now performed on byte count.
-    void *dat_offset_addr = (void*)(eeh_segment_ptr + dat->loc_eeh_seg_off);
+    void *dat_offset_addr; 
+    if(gpi_buf->is_dynamic){
+        dat_offset_addr =(void*)(eeh_heap_segment_ptr + dat->loc_eeh_seg_off);
+    }
+    else{
+        dat_offset_addr = (void*)(eeh_segment_ptr + dat->loc_eeh_seg_off);
+    }
 
     int set_elem_index;
     for (int i = 0; i < exp_exec_list->ranks_size; i++) {
@@ -88,15 +91,14 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                (void *)&dat->data[dat->size * (set_elem_index)], dat->size);
       }
 
-
       //get remote offsets for that rank
       gaspi_offset_t remote_exec_offset = (gaspi_offset_t) gpi_buf->remote_exec_offsets[i];
 
       gaspi_offset_t local_offset = (gaspi_offset_t) dat->loc_eeh_seg_off+ exp_exec_list->disps[i]*dat->size;
-      GPI_QUEUE_SAFE( gaspi_write_notify(EEH_SEGMENT_ID, /* local segment id*/
+      GPI_QUEUE_SAFE( gaspi_write_notify(EEH_SEGMENT_ID + gpi_buf->is_dynamic*10, /* local segment id*/
                         local_offset, /* local segment offset*/
                         exp_exec_list->ranks[i], /* remote rank*/
-                        IEH_SEGMENT_ID, /* remote segment id*/
+                        IEH_SEGMENT_ID  + gpi_buf->is_dynamic*10, /* remote segment id*/
                         remote_exec_offset, /* remote offset*/
                         dat->size * exp_exec_list->sizes[i], /* send size*/
                         dat->index <<7 | gpi_rank, /* notification id*/
@@ -104,6 +106,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                         OP2_GPI_QUEUE_ID, /* queue id*/
                         GPI_TIMEOUT /* timeout*/
                         ), OP2_GPI_QUEUE_ID )
+
 #ifdef GPI_VERBOSE
       printf("Rank %d sent execute %s dat data to rank %d with not_ID %d \n",gpi_rank,dat->name, exp_exec_list->ranks[i],dat->index <<7 | gpi_rank);
       fflush(stdout);
@@ -120,7 +123,12 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
         GPI_FAIL("Error: Non-Export list and set mismatch");
     }
 
-    dat_offset_addr = (void*)(enh_segment_ptr + dat->loc_enh_seg_off);
+    if(gpi_buf->is_dynamic){
+        dat_offset_addr = (void*)(enh_heap_segment_ptr + dat->loc_enh_seg_off);
+    }
+    else{
+        dat_offset_addr = (void*)(enh_segment_ptr + dat->loc_enh_seg_off);
+    }
 
     for (int i =0; i < exp_nonexec_list->ranks_size; i++){
         for (int j=0;j<exp_nonexec_list->sizes[i];j++){
@@ -129,16 +137,15 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
             memcpy((void*)dat_offset_addr+exp_nonexec_list->disps[i]* dat->size + j *dat->size,
                    (void*)&dat->data[dat->size * (set_elem_index)],
                     dat->size);
-
         }
         
         gaspi_offset_t remote_nonexec_offset = (gaspi_offset_t) gpi_buf->remote_nonexec_offsets[i];
 
         GPI_QUEUE_SAFE( gaspi_write_notify(
-                           ENH_SEGMENT_ID, /* local segment */
+                           ENH_SEGMENT_ID + gpi_buf->is_dynamic*10, /* local segment */
                            (gaspi_offset_t) dat->loc_enh_seg_off + exp_nonexec_list->disps[i]*dat->size, /* local segment offset*/
                            exp_nonexec_list->ranks[i], /* remote rank*/
-                           INH_SEGMENT_ID, /* remote segment */
+                           INH_SEGMENT_ID + gpi_buf->is_dynamic*10, /* remote segment */
                            remote_nonexec_offset, /* remote segment offset*/
                            dat->size * exp_nonexec_list->sizes[i], /* data to send (in bytes)*/
                            dat->index<<7 | gpi_rank, /* notification id*/
@@ -146,7 +153,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                            OP2_GPI_QUEUE_ID, /* queue id*/
                            GPI_TIMEOUT /* timeout */
                            ), OP2_GPI_QUEUE_ID )
-      
+
 #ifdef GPI_VERBOSE
         printf("Rank %d sent non-execute %s dat data to rank %d with not_ID %d.\n",gpi_rank,dat->name, exp_nonexec_list->ranks[i], dat->index <<7 | gpi_rank);
         fflush(stdout);
@@ -170,7 +177,6 @@ void op_gpi_waitall(op_arg *arg){
     if(!(arg->opt && arg->argtype == OP_ARG_DAT && arg->sent ==1))
         return;
     
-
     gaspi_rank_t rank;
     gaspi_proc_rank(&rank);
 
@@ -208,7 +214,7 @@ void op_gpi_waitall(op_arg *arg){
 
     /* Receive for exec elements*/
     for(int i=0;i<buff->exec_recv_count;i++){
-        GPI_SAFE( gaspi_notify_waitsome(IEH_SEGMENT_ID, 
+        GPI_SAFE( gaspi_notify_waitsome(IEH_SEGMENT_ID + buff->is_dynamic*10, 
                             dat->index << 7,
                             10, /* Should be max_expected rank*/
                             &notif_id, /* Notification id should be the dat index*/
@@ -227,7 +233,7 @@ void op_gpi_waitall(op_arg *arg){
         }
         
         //store and reset notification value
-        GPI_SAFE( gaspi_notify_reset(IEH_SEGMENT_ID,
+        GPI_SAFE( gaspi_notify_reset(IEH_SEGMENT_ID + buff->is_dynamic*10,
                             notif_id,
                             &notif_value) ) 
 
@@ -256,8 +262,10 @@ void op_gpi_waitall(op_arg *arg){
 
         op_timers_core(&c1, &t1);
         
+        char *segment_ptr = buff->is_dynamic ? ieh_heap_segment_ptr : ieh_segment_ptr;
+
         // Copy the data into the op_dat->data array
-        memcpy(obj->memcpy_addr, (void*) (ieh_segment_ptr + obj->segment_recv_offset), obj->size);
+        memcpy(obj->memcpy_addr, (void*) (segment_ptr + obj->segment_recv_offset), obj->size);
         op_timers_core(&c2, &t2);
         op_comm_perf_time("memcpy",t2-t1);
 
@@ -289,7 +297,7 @@ void op_gpi_waitall(op_arg *arg){
 
     /* Receive for nonexec elements*/
     for(int i=0;i<buff->nonexec_recv_count;i++){
-        GPI_SAFE( gaspi_notify_waitsome(INH_SEGMENT_ID, 
+        GPI_SAFE( gaspi_notify_waitsome(INH_SEGMENT_ID + buff->is_dynamic*10, 
                             dat->index<<7,
                             10, /* Should be max_expected_rank*/
                             &notif_id, /* Notification id should be the dat index*/
@@ -308,7 +316,7 @@ void op_gpi_waitall(op_arg *arg){
         }
         
         //store and reset notification value
-        GPI_SAFE( gaspi_notify_reset(INH_SEGMENT_ID,
+        GPI_SAFE( gaspi_notify_reset(INH_SEGMENT_ID + buff->is_dynamic*10,
                             notif_id,
                             &notif_value) )
         
@@ -335,9 +343,10 @@ void op_gpi_waitall(op_arg *arg){
         op_gpi_recv_obj *obj = &nonexec_recv_objs[obj_idx]; /* not neccessary but looks nicer later*/
         
         op_timers_core(&c1, &t1);
+        char *segment_ptr = buff->is_dynamic ? inh_heap_segment_ptr : inh_segment_ptr;
 
         // Copy the data into the op_dat->data array
-        memcpy(obj->memcpy_addr, (void*) (inh_segment_ptr + obj->segment_recv_offset), obj->size);
+        memcpy(obj->memcpy_addr, (void*) (segment_ptr + obj->segment_recv_offset), obj->size);
         op_timers_core(&c2, &t2);
         op_comm_perf_time("memcpy",t2-t1);
 

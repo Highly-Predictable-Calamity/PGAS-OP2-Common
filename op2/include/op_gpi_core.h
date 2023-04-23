@@ -49,6 +49,7 @@ typedef struct{
 } op_gpi_recv_obj; 
 
 struct op_gpi_buffer_core{
+  int is_dynamic; /* States if data is stored on dynamic segments */
   int exec_recv_count; /* Number of recieves for import execute segment expect (i.e. number of remote ranks)*/
   int nonexec_recv_count; /* Number of recieves for import non-execute segment expect (i.e number of remote ranks)*/
   op_gpi_recv_obj *exec_recv_objs; /*  For exec elements of this dat, one for each of the expected notifications*/

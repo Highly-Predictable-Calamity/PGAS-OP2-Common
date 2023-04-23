@@ -46,6 +46,8 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     *  this is used for the sending process.
     */
     if(flags & GPI_STD_DAT){
+        gpi_buf->is_dynamic=0;
+
         dat->loc_eeh_seg_off=(int)eeh_size;
         dat->loc_enh_seg_off=(int)enh_size;
 
@@ -54,7 +56,14 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     
     }
     else{ /* GPI_HEAP_DAT */
+        gpi_buf->is_dynamic=1;
+        
+        /* Allocate memory regions inside the dynamic segment */
+        dat->loc_eeh_seg_off=(int) op_gpi_segment_malloc(EEH_HEAP_SEGMENT_ID,exp_exec_list->size * dat->size);
+        dat->loc_enh_seg_off=(int) op_gpi_segment_malloc(ENH_HEAP_SEGMENT_ID,exp_nonexec_list->size * dat->size);
 
+        exec_dat_rank_offset =  op_gpi_segment_malloc(IEH_HEAP_SEGMENT_ID,imp_exec_list->size * dat->size);
+        nonexec_dat_rank_offset =op_gpi_segment_malloc(INH_HEAP_SEGMENT_ID,imp_nonexec_list->size * dat->size); 
     }
 
 
@@ -70,6 +79,8 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
 
     dat->gpi_buffer = (void *)gpi_buf;
 
+
+
     /* populate the recv obj info */
 
     op_gpi_recv_obj *recv_obj;
@@ -81,18 +92,18 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     /* populate the exec recv objects info*/
     for (int i = 0; i < gpi_buf->exec_recv_count; i++)
     {
-    recv_obj = &gpi_buf->exec_recv_objs[i];
+        recv_obj = &gpi_buf->exec_recv_objs[i];
 
-    recv_obj->remote_rank = imp_exec_list->ranks[i];
-    recv_obj->size = dat->size * imp_exec_list->sizes[i];
+        recv_obj->remote_rank = imp_exec_list->ranks[i];
+        recv_obj->size = dat->size * imp_exec_list->sizes[i];
 
-    /* Address calc reused from op_mpi_rt_support: op_exchange_halo */
-    recv_obj->memcpy_addr = &dat->data[exec_init + imp_exec_list->disps[i] * dat->size];
+        /* Address calc reused from op_mpi_rt_support: op_exchange_halo */
+        recv_obj->memcpy_addr = &dat->data[exec_init + imp_exec_list->disps[i] * dat->size];
 
-    recv_obj->segment_recv_offset = exec_dat_rank_offset;
+        recv_obj->segment_recv_offset = exec_dat_rank_offset;
 
-    // increment the segment offset by the size of the recv object data
-    exec_dat_rank_offset += recv_obj->size;
+        // increment the segment offset by the size of the recv object data
+        exec_dat_rank_offset += recv_obj->size;
     }
 
     int nonexec_init = (dat->set->size + imp_exec_list->size) * dat->size;
@@ -100,18 +111,18 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     /* same as above but for non-execute elements*/
     for (int i = 0; i < gpi_buf->nonexec_recv_count; i++)
     {
-    recv_obj = &gpi_buf->nonexec_recv_objs[i];
+        recv_obj = &gpi_buf->nonexec_recv_objs[i];
 
-    recv_obj->remote_rank = imp_nonexec_list->ranks[i];
-    recv_obj->size = dat->size * imp_nonexec_list->sizes[i];
+        recv_obj->remote_rank = imp_nonexec_list->ranks[i];
+        recv_obj->size = dat->size * imp_nonexec_list->sizes[i];
 
-    /* Address calc reused from op_mpi_rt_support: op_exchange_halo */
-    recv_obj->memcpy_addr = &dat->data[nonexec_init + imp_nonexec_list->disps[i] * dat->size];
+        /* Address calc reused from op_mpi_rt_support: op_exchange_halo */
+        recv_obj->memcpy_addr = &dat->data[nonexec_init + imp_nonexec_list->disps[i] * dat->size];
 
-    recv_obj->segment_recv_offset = nonexec_dat_rank_offset;
+        recv_obj->segment_recv_offset = nonexec_dat_rank_offset;
 
-    // increment the segment offset by the size of the recv object data
-    nonexec_dat_rank_offset += recv_obj->size;
+        // increment the segment offset by the size of the recv object data
+        nonexec_dat_rank_offset += recv_obj->size;
     }
 
 
@@ -146,37 +157,37 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     /* Execute elements */
     for (int i = 0; i < imp_exec_list->ranks_size; i++)
     {
-    recv_obj = &gpi_buf->exec_recv_objs[i];
+        recv_obj = &gpi_buf->exec_recv_objs[i];
 
-    send_okay = send_okay &
-        MPI_Isend(
-        &recv_obj->segment_recv_offset,
-        1,
-        MPI_UNSIGNED_LONG,
-        recv_obj->remote_rank,
-        dat->index,
-        OP_MPI_WORLD,
-        &gpi_buf->pre_exchange_hndl_s[i])==MPI_SUCCESS;
+        send_okay = send_okay &
+            MPI_Isend(
+            &recv_obj->segment_recv_offset,
+            1,
+            MPI_UNSIGNED_LONG,
+            recv_obj->remote_rank,
+            dat->index,
+            OP_MPI_WORLD,
+            &gpi_buf->pre_exchange_hndl_s[i])==MPI_SUCCESS;
     }
 
     /* Non-execute elements */
     for (int i = 0; i < imp_nonexec_list->ranks_size; i++)
     {
-    recv_obj = &gpi_buf->nonexec_recv_objs[i];
+        recv_obj = &gpi_buf->nonexec_recv_objs[i];
 
-    send_okay = send_okay &
-        MPI_Isend(
-        &recv_obj->segment_recv_offset,
-        1,
-        MPI_UNSIGNED_LONG,
-        recv_obj->remote_rank,
-        1 << 20 | dat->index, /* 1 in MSB -1 to indicate non-execute */
-        OP_MPI_WORLD,
-        &gpi_buf->pre_exchange_hndl_s[i + gpi_buf->exec_recv_count] // as sharing a MPI_Request array
-        )==MPI_SUCCESS;
+        send_okay = send_okay &
+            MPI_Isend(
+            &recv_obj->segment_recv_offset,
+            1,
+            MPI_UNSIGNED_LONG,
+            recv_obj->remote_rank,
+            1 << 20 | dat->index, /* 1 in MSB -1 to indicate non-execute */
+            OP_MPI_WORLD,
+            &gpi_buf->pre_exchange_hndl_s[i + gpi_buf->exec_recv_count] // as sharing a MPI_Request array
+            )==MPI_SUCCESS;
     }
     if(!send_okay){
-    GPI_FAIL("Status code on MPI_IRecv non-zero\n");
+        GPI_FAIL("Status code on MPI_IRecv non-zero\n");
     }
 
     /* RECEIVE */
@@ -192,18 +203,18 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     bool recv_okay = true;
     for (int i = 0; i < exp_exec_list->ranks_size; i++)
     {
-    recv_okay = recv_okay &
-        MPI_Recv(&(gpi_buf->remote_exec_offsets[i]),
-                1,
-                MPI_UNSIGNED_LONG,
-                exp_exec_list->ranks[i],
-                dat->index,
-                OP_MPI_WORLD,
-                MPI_STATUS_IGNORE)==MPI_SUCCESS;
+        recv_okay = recv_okay &
+            MPI_Recv(&(gpi_buf->remote_exec_offsets[i]),
+                    1,
+                    MPI_UNSIGNED_LONG,
+                    exp_exec_list->ranks[i],
+                    dat->index,
+                    OP_MPI_WORLD,
+                    MPI_STATUS_IGNORE)==MPI_SUCCESS;
     }
     for (int i = 0; i < exp_nonexec_list->ranks_size; i++)
     {
-    recv_okay = recv_okay &
+        recv_okay = recv_okay &
         MPI_Recv(&(gpi_buf->remote_nonexec_offsets[i]),
                 1,
                 MPI_UNSIGNED_LONG,
@@ -213,11 +224,10 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
                 MPI_STATUS_IGNORE)==MPI_SUCCESS;
     }
     if(!recv_okay){
-    GPI_FAIL("Status code on MPI_IRecv non-zero\n");
+        GPI_FAIL("Status code on MPI_IRecv non-zero\n");
     }
 
-    printf("Setup GPI stuff for %s, with buff %p\n",dat->name, dat->gpi_buffer);
-    fflush(stdout);
+
     return 0;
 }
 
@@ -235,7 +245,7 @@ MemorySegmentHeader_t *enh_seg_start;
 MemorySegmentHeader_t *ieh_seg_start;
 MemorySegmentHeader_t *inh_seg_start;
 
-void intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size);
+void *intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size);
 
 /* Initialises all segments for heap gpi dat data.*/
 void op_gpi_setup_segments_heap(){
@@ -275,7 +285,7 @@ gaspi_offset_t op_gpi_segment_malloc(gaspi_segment_id_t  seg_id,int size){
     //if at end return NULL
     while(!currSeg->free || size > currSeg->size){
         currSeg=currSeg->next;
-        if(!currSeg) return (gaspi_offset_t)-1;
+        if(!currSeg)  GPI_FAIL("Unable to allocate segment of size %d on segment ID %d.\n",size,seg_id)
     }
     /* Update the segment info */
     uint32_t init_size =currSeg->size;
@@ -392,7 +402,7 @@ void segment_free(gaspi_segment_id_t seg_id,gaspi_offset_t offset){
 
 
 /* Allocates the segment memory, binds it to GPI segment, registers with other processes, initialises heap*/
-void intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size){
+void *intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size){
     MemorySegmentHeader_t **seg;
     char **seg_ptr;
     
@@ -431,5 +441,6 @@ void intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size){
     (*seg)->previous=NULL;
     (*seg)->free=true;
     
-    *seg_ptr=(char*)seg;
+    *seg_ptr=alloced;
+    return (void*)alloced;
 }

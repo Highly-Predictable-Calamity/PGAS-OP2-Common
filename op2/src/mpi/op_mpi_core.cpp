@@ -1155,7 +1155,6 @@ extern "C"
       mpi_buf->s_num_req = 0;
       mpi_buf->r_num_req = 0;
       dat->mpi_buffer = mpi_buf;
-      printf("MPI Buffer for %s setup with buffer %p.\n",dat->name,dat->mpi_buffer);
     }
 
     // set dirty bits of all data arrays to 0
