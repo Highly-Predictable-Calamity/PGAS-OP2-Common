@@ -19,7 +19,6 @@
 /* GPI reimplementation of op_exchange_halo originally found in op_mpi_rt_support.cpp 
  * IS_COMMON 
  * Lots of this is common, so can be put there. 
- * TODO checks are required to ensure the offsets are correct within the segments.
 */
 void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
     op_dat dat = arg->dat;

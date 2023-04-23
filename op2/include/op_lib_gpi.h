@@ -41,4 +41,16 @@
 #include <op_mpi_core.h>
 
 
+#define GPI_HEAP_SIZE (256 * 4096) /* 256 4K pages ~ 1MB */ 
+
+#define GPI_HEAP_DAT (1<<2) /* GPI segment data should be allocated in the heap section */
+#define GPI_STD_DAT  (1<<1) /* GPI segment data should be allocated in the static segment region */
+
+extern gaspi_size_t eeh_size, enh_size, ieh_size, inh_size;
+
+
+
+int op_gpi_buffer_setup(op_dat dat, int flags);
+
+
 #endif //__OP_LIB_GPI_H

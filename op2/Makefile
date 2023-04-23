@@ -168,6 +168,7 @@ OP2_FOR_MPI_CUDA := $(OP2_MPI_CUDA) $(OP2_FOR_BASE_MPI_CUDA) $(addprefix $(OBJ)/
 
 OP2_GPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
 	gpi/op_gpi_core.o \
+	gpi/op_gpi_decl.o\
 	gpi/op_gpi_performance.o \
 	gpi/op_gpi_rt_support.o \
 	gpi/op_gpi_util.o \

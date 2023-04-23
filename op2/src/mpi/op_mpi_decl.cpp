@@ -48,6 +48,7 @@
 #include "../gpi/gpi_utils.h"
 #include <op_gpi_performance.h>
 #include <op_gpi_core.h>
+#include <op_lib_gpi.h>
 #endif
 
 //
@@ -129,6 +130,8 @@ void op_mpi_init(int argc, char **argv, int diags, MPI_Fint global,
   MPI_Barrier(OP_MPI_GLOBAL);
 
   gaspi_proc_init(1500);
+    
+  eeh_size = enh_size = ieh_size = inh_size = (gaspi_size_t) GPI_HEAP_SIZE;
 	
 	gaspi_barrier(GASPI_GROUP_ALL ,1500);
 
@@ -205,6 +208,15 @@ op_dat op_decl_dat_temp_char(op_set set, int dim, char const *type, int size,
   mpi_buf->r_num_req = 0;
 
   dat->mpi_buffer = mpi_buf;
+
+
+#ifdef HAVE_GPI
+
+  /* Setup GPI exhcnage buffers */
+  if(op_gpi_buffer_setup(dat, GPI_HEAP_DAT) != 0){
+    GPI_FAIL("Failed to initialise gpi segment data for dat: %s",dat->name)
+  }
+#endif
 
   return dat;
 }
