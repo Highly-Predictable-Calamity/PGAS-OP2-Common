@@ -48,6 +48,8 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
         || (dat->dirtybit !=1))
             return;
     
+    printf("In gpi exchange halo of %s with buf addr %p\n",dat->name, dat->gpi_buffer);
+    fflush(stdout);
 
 
     //Grab the halo lists
@@ -205,7 +207,6 @@ void op_gpi_waitall(op_arg *arg){
     }
 
 
-
     /* Receive for exec elements*/
     for(int i=0;i<buff->exec_recv_count;i++){
         GPI_SAFE( gaspi_notify_waitsome(IEH_SEGMENT_ID, 
@@ -217,7 +218,7 @@ void op_gpi_waitall(op_arg *arg){
 #ifdef GPI_VERBOSE
         printf("Rank %d received exec not_ID %d.\n",rank,notif_id);
 #endif
-        
+
         recv_rank = notif_id & ((1<<7)-1); /* Filter out the upper half */
         recv_dat_index= (int) notif_id>> 7; /* Get only the upper half*/
         

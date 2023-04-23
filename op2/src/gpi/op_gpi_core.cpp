@@ -110,7 +110,7 @@ int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args){
 /* Wait for all args.
  * IS_COMMON
  * GPI replacement for op_mpi_wait_all.
- * MPI has a bad naming convention for this stuff, thus tried to clarify with _args */
+ * OP2 MPI has a poor naming convention for this stuff, thus tried to clarify with _args */
 void op_gpi_waitall_args(int nargs, op_arg *args){
     op_timers_core(&c1, &t1);
     for (int n = 0; n < nargs; n++) {

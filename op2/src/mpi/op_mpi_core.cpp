@@ -1133,6 +1133,7 @@ extern "C"
       op_dat dat = item->dat;
 
       op_mpi_buffer mpi_buf = (op_mpi_buffer)xmalloc(sizeof(op_mpi_buffer_core));
+      memset(mpi_buf, 0,sizeof(op_mpi_buffer_core));
 
       halo_list exec_e_list = OP_export_exec_list[dat->set->index];
       halo_list nonexec_e_list = OP_export_nonexec_list[dat->set->index];
@@ -1153,6 +1154,7 @@ extern "C"
       mpi_buf->s_num_req = 0;
       mpi_buf->r_num_req = 0;
       dat->mpi_buffer = mpi_buf;
+      printf("MPI Buffer for %s setup with buffer %p.\n",dat->name,dat->mpi_buffer);
     }
 
     // set dirty bits of all data arrays to 0
@@ -1791,6 +1793,9 @@ extern "C"
       if(!recv_okay){
         GPI_FAIL("Status code on MPI_IRecv non-zero\n");
       }
+    
+      printf("Setup GPI stuff for %s, with buff %p\n",dat->name, dat->gpi_buffer);
+      fflush(stdout);
     }
 
     //Barrier before starting GPI communication
