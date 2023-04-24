@@ -1604,7 +1604,7 @@ extern "C"
     {
       op_dat dat = item->dat;
 
-      if(op_gpi_buffer_setup(dat, GPI_STD_DAT) != 0)
+      if(op_gpi_buffer_setup(dat, GPI_HEAP_DAT) != 0)
         GPI_FAIL("GPI buffer setup failed for dat %s.\n",dat->name);
     }
 

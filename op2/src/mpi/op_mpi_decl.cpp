@@ -90,10 +90,14 @@ void op_init(int argc, char **argv, int diags) {
   }
   
   MPI_Barrier(OP_MPI_GLOBAL);
-  printf("here!\n");
-  fflush(stdout);
+  
+  int ret;
+  if((ret = gaspi_proc_init(GPI_TIMEOUT)) != GASPI_SUCCESS){
+    fprintf(stderr, "gaspi_proc_init failed. Use GPI debug variant for more information.\n");
+    fflush(stderr);
+    MPI_Abort(MPI_COMM_WORLD,ret);
+  }
 
-  GPI_SAFE( gaspi_proc_init(GPI_TIMEOUT) )
 
   //eeh_size = enh_size = ieh_size = inh_size = (gaspi_size_t) GPI_HEAP_SIZE;
   
@@ -212,8 +216,7 @@ op_dat op_decl_dat_temp_char(op_set set, int dim, char const *type, int size,
 
 
 #ifdef HAVE_GPI
-
-  /* Setup GPI exhcnage buffers */
+  /* Setup GPI exchange buffers on the dynamic heap */
   if(op_gpi_buffer_setup(dat, GPI_HEAP_DAT) != 0){
     GPI_FAIL("Failed to initialise gpi segment data for dat: %s",dat->name)
   }

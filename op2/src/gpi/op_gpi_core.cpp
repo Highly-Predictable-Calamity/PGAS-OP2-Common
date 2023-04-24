@@ -47,13 +47,14 @@ int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args){
   if (OP_diags > 0) {
     int dummy;
     for (int n = 0; n < nargs; n++)
-      op_arg_check(set, n, args[n], &dummy, "halo_exchange mpi");
+      op_arg_check(set, n, args[n], &dummy, "halo_exchange gpi");
   }
 
   if (OP_hybrid_gpu) {
     for (int n = 0; n < nargs; n++)
       if (args[n].opt && args[n].argtype == OP_ARG_DAT &&
-          args[n].dat->dirty_hd == 2) {
+          args[n].dat->dirty_hd == 2)
+      {
         op_download_dat(args[n].dat);
         args[n].dat->dirty_hd = 0;
       }
@@ -80,6 +81,7 @@ int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args){
   for (int n = 0; n < nargs; n++) {
     if (args[n].opt && args[n].argtype == OP_ARG_DAT) {
       if (args[n].map == OP_ID) {
+        //printf("ID exchange\n");
         op_gpi_exchange_halo(&args[n], exec_flag);
       } else {
         // Check if dat-map combination was already done or if there is a
@@ -94,14 +96,18 @@ int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args){
         }
         // If there was a map mismatch with other argument, do full halo
         // exchange
-        if (fallback)
+        if (fallback){
           op_gpi_exchange_halo(&args[n], exec_flag);
+          //printf("fallback exchange\n"); 
+        }
         else if (!found) { // Otherwise, if partial halo exchange is enabled for
                            // this map, do it
           if (OP_map_partial_exchange[args[n].map->index])
             op_gpi_exchange_halo_partial(&args[n], exec_flag);
-          else
+          else {
+            //printf("something else exchange\n");
             op_gpi_exchange_halo(&args[n], exec_flag);
+          }
         }
       }
     }
@@ -192,7 +198,7 @@ void op_gpi_reduce_combined(op_arg *args, int nargs){
   gaspi_size_t size = nbytes;
   gaspi_segment_id_t remote_segment = local_segment;
   gaspi_offset_t remote_offset = size;
-  gaspi_queue_id_t queue = 1;
+  gaspi_queue_id_t queue = 2;
   gaspi_group_t group = GASPI_GROUP_ALL;
   gaspi_timeout_t timeout = GASPI_BLOCK;
 
@@ -414,7 +420,7 @@ void op_gpi_reduce_float(op_arg *arg, float *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 1;  // TODO
+    gaspi_queue_id_t queue = 2;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
@@ -497,7 +503,7 @@ void op_gpi_reduce_double(op_arg *arg, double *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 1;  // TODO
+    gaspi_queue_id_t queue = 2;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
@@ -580,7 +586,7 @@ void op_gpi_reduce_int(op_arg *arg, int *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 1;  // TODO
+    gaspi_queue_id_t queue = 2;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
@@ -663,7 +669,7 @@ void op_gpi_reduce_bool(op_arg *arg, bool *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = OP2_GPI_QUEUE_ID;  // TODO
+    gaspi_queue_id_t queue = 2;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     

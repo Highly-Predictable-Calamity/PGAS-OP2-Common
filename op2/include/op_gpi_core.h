@@ -9,6 +9,8 @@ extern double t1, t2, c1, c2;
 
 #include "../src/gpi/gpi_utils.h"
 
+#define DYNAMIC_SEG_ID_OFFSET 10
+
 #define EEH_SEGMENT_ID 1
 #define ENH_SEGMENT_ID 2
 #define IEH_SEGMENT_ID 3
@@ -16,10 +18,10 @@ extern double t1, t2, c1, c2;
 
 #define MSC_SEGMENT_ID 5
 
-#define EEH_HEAP_SEGMENT_ID 11
-#define ENH_HEAP_SEGMENT_ID 12
-#define IEH_HEAP_SEGMENT_ID 13
-#define INH_HEAP_SEGMENT_ID 14
+#define EEH_HEAP_SEGMENT_ID (EEH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
+#define ENH_HEAP_SEGMENT_ID (ENH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
+#define IEH_HEAP_SEGMENT_ID (IEH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
+#define INH_HEAP_SEGMENT_ID (INH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
 
 extern gaspi_group_t OP_GPI_WORLD;
 extern gaspi_group_t OP_GPI_GLOBAL;

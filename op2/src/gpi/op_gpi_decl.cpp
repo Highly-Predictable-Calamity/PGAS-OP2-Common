@@ -429,6 +429,9 @@ void *intialise_gpi_heap_segment(gaspi_segment_id_t seg_id, int size){
 
     /* allocate the segment */
     char *alloced = (char*) xmalloc(size);
+    if(!alloced){
+        GPI_FAIL("Unable to initialise %d bytes for a segment.\n",size)
+    }
     int ret = gaspi_segment_use(seg_id, (gaspi_pointer_t)alloced, size, OP_GPI_WORLD, GPI_TIMEOUT, GASPI_ALLOC_DEFAULT);
     if(ret!=0){
         GPI_FAIL("Unable to use segment.\n")
