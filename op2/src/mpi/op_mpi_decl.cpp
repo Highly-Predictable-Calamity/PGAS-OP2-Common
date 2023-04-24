@@ -90,7 +90,7 @@ void op_init(int argc, char **argv, int diags) {
   
   MPI_Barrier(OP_MPI_GLOBAL);
 
-  GPI_SAFE( gaspi_proc_init(GPI_TIMEOUT) )
+  GPI_SAFE( gaspi_proc_init(GPI_TIMEOUT*5) )
 
   OP_GPI_WORLD = GASPI_GROUP_ALL;
   OP_GPI_GLOBAL= GASPI_GROUP_ALL;
