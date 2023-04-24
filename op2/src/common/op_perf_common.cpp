@@ -169,10 +169,11 @@ void comm_timing_output() {
 		int i = 0;
 
 		// Rank-local performance is printed within lockstep for each rank
+#ifdef RANK_PERF_DISABLED
 		while (i < comm_size) {
 			MPI_Barrier(OP_MPI_IO_WORLD);
 			if (i == my_rank) {
-				printf("___________________________________________________\n");
+				printf("c__________________________________________________\n");
 				printf("Performance information on rank %d\n", my_rank);
 				printf("Kernel        Count  total time(sec)  Avg time(sec)  \n");
 				
@@ -183,6 +184,7 @@ void comm_timing_output() {
 									 k->time, k->time / k->count);
 						fflush(stdout);
 						timing_breakdown_output(k);
+						fflush(stdout);
 
 #ifdef COMM_PERF
 						if (k->num_indices > 0) {
@@ -210,12 +212,14 @@ void comm_timing_output() {
 					}
 				}
 				printf("___________________________________________________\n");
+				fflush(stdout);
 			} /* i == my_rank */
 			i++;
-			fflush(stdout);
 			MPI_Barrier(OP_MPI_IO_WORLD);
 		} /* while (i < comm_size) */
+#endif // DISABLED
 		
+		//fflush(stdout);
 		MPI_Barrier(OP_MPI_IO_WORLD);
     if (my_rank == MPI_ROOT) {
       printf("___________________________________________________\n");
