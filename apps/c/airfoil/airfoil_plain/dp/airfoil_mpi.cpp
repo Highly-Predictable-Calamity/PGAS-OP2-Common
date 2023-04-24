@@ -63,7 +63,8 @@ double gam, gm1, cfl, eps, mach, alpha, qinf[4];
 
 #include "op_lib_mpi.h"
 #include "op_seq.h"
-#include "op_gpi_performance.h"
+#include "op_perf_common.h"
+
 
 //
 // kernel routines for parallel loops
@@ -357,9 +358,6 @@ int main(int argc, char **argv) {
 
   op_diagnostic_output();
   
-  printf("before partition!\n");
-  fflush(stdout);
-
   // trigger partitioning and halo creation routines
   op_partition("PTSCOTCH", "KWAY", cells, pecell, p_x);
   // op_partition("PARMETIS", "KWAY", cells, pecell, p_x);
@@ -479,7 +477,10 @@ int main(int argc, char **argv) {
   printf("\nairfoil_mpi.cpp\n");
 
   op_timing_output();
-
+	mpi_timing_output();
+	//op_mpi_timing_output();
+	comm_timing_output();
+	
   op_printf("Max total runtime = %f\n", wall_t2 - wall_t1);
 
   op_exit();
