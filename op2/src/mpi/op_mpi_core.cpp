@@ -3410,7 +3410,7 @@ extern "C"
       double tot_time;
       double avg_time;
 
-      printf("___________________________________________________\n");
+      printf("m__________________________________________________\n");
       printf("Performance information on rank %d\n", my_rank);
       printf("Kernel        Count  total time(sec)  Avg time(sec)  \n");
 

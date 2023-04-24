@@ -103,7 +103,7 @@ void gpi_timing_output() {
 			MPI_Barrier(OP_MPI_IO_WORLD);
 			if (i == my_rank) {
 
-				printf("___________________________________________________\n");
+				printf("g__________________________________________________\n");
 				printf("Performance information on rank %d\n", my_rank);
 				printf("Kernel        Count  total time(sec)  Avg time(sec)  \n");
 				for (k = op_comm_kernel_tab; k != NULL; k = (op_comm_kernel *)k->hh.next) {
