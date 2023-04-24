@@ -54,6 +54,8 @@ from op2_gen_cuda_simple import op2_gen_cuda_simple
 from op2_gen_cuda_simple_hyb import op2_gen_cuda_simple_hyb
 from op2_gen_openmp4 import op2_gen_openmp4
 
+from op2_gen_gpi_seq import op2_gen_gpi_seq
+
 from op2_gen_common import *
 
 # from http://stackoverflow.com/a/241506/396967
@@ -935,6 +937,9 @@ def main(srcFilesAndDirs=sys.argv[1:]):
 
   #code generator for GPUs with OpenMP4.5
   op2_gen_openmp4(masterFile, date, consts, kernels)
+
+  #code generator for GPI sequential version.
+  op2_gen_gpi_seq(masterFile, date, consts, kernels)
 
   # import subprocess
   # retcode = subprocess.call("which clang-format > /dev/null", shell=True)

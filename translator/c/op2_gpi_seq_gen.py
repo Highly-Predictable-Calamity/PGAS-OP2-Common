@@ -12,7 +12,7 @@
 maxargs = 20
 
 #open/create file
-f = open('./op_seq.h','w')
+f = open('./op_gpi_seq.h','w')
 
 #
 #first the top bit
