@@ -20,7 +20,7 @@ f = open('./op_gpi_seq.h','w')
 
 top =  """
 //
-// header for sequential and MPI+sequentional execution
+// header for sequential and GPI+sequentional execution
 //
 
 #include "op_lib_cpp.h"
@@ -148,7 +148,7 @@ for nargs in range (1,maxargs+1):
     f.write('  double cpu_t1, cpu_t2, wall_t1, wall_t2;\n')
     f.write('  op_timers_core(&cpu_t1, &wall_t1);\n\n')
 
-    f.write('  // MPI halo exchange and dirty bit setting, if needed\n')
+    f.write('  // GPI halo exchange and dirty bit setting, if needed\n')
     f.write('  int n_upper = op_gpi_halo_exchanges(set, '+str(nargs)+', args);\n\n')
     f.write('  // loop over set elements\n')
     f.write('  int halo = 0; \n\n')
@@ -175,10 +175,10 @@ for nargs in range (1,maxargs+1):
     f.write('  }\n')
     f.write('  if ( n_upper == set->core_size || n_upper == 0 )\n    op_gpi_waitall ('+str(nargs)+',args);\n\n')
     f.write('  //set dirty bit on datasets touched\n')
-    f.write('  op_mpi_set_dirtybit('+str(nargs)+', args);\n\n')
+    f.write('  op_gpi_set_dirtybit('+str(nargs)+', args);\n\n')
 
-    f.write('  //global reduction for MPI execution, if needed \n')
-    f.write('  //p_a simply used to determine type for MPI reduction\n')
+    f.write('  //global reduction for GPI execution, if needed \n')
+    f.write('  //p_a simply used to determine type for GPI reduction\n')
     for n in range (0, nargs):
         f.write('  op_gpi_reduce(&arg'+str(n)+',(T'+str(n)+' *)p_a['+str(n)+']);\n')
 

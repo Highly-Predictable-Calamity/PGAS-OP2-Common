@@ -1,6 +1,6 @@
 ##########################################################################
 #
-# MPI Sequential code generator
+# GPI Sequential code generator
 #
 # This routine is called by op2 which parses the input files
 #
@@ -348,7 +348,7 @@ def op2_gen_gpi_seq(master, date, consts, kernels):
     comm(' combine reduction data')
     for g_m in range(0,nargs):
       if maps[g_m]==OP_GBL and accs[g_m]!=OP_READ:
-#        code('op_mpi_reduce(&<ARG>,('+typs[g_m]+'*)<ARG>.data);')
+#        code('op_gpi_reduce(&<ARG>,('+typs[g_m]+'*)<ARG>.data);')
         if typs[g_m] == 'double': #need for both direct and indirect
           code('op_gpi_reduce_double(&<ARG>,('+typs[g_m]+'*)<ARG>.data);')
         elif typs[g_m] == 'float':
@@ -359,7 +359,7 @@ def op2_gen_gpi_seq(master, date, consts, kernels):
           print('Type '+typs[g_m]+' not supported in OpenACC code generator, please add it')
           exit(-1)
 
-    code('op_mpi_set_dirtybit(nargs, args);')
+    code('op_gpi_set_dirtybit(nargs, args);')
     code('')
 
 #
