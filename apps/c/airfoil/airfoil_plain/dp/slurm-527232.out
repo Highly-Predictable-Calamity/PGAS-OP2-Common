@@ -1,7 +1,0 @@
-Lmod has detected the following error: These module(s) or extension(s) exist
-but cannot be loaded as requested: "Autotools"
-   Try: "module spider Autotools" to see how to load the module(s).
-
-
-
-/var/spool/slurmd/job527232/slurm_script: line 12: mpirun: command not found

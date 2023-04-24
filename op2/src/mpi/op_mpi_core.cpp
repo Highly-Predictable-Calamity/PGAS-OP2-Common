@@ -1133,6 +1133,7 @@ extern "C"
       op_dat dat = item->dat;
 
       op_mpi_buffer mpi_buf = (op_mpi_buffer)xmalloc(sizeof(op_mpi_buffer_core));
+      memset(mpi_buf, 0,sizeof(op_mpi_buffer_core));
 
       halo_list exec_e_list = OP_export_exec_list[dat->set->index];
       halo_list nonexec_e_list = OP_export_nonexec_list[dat->set->index];
@@ -1153,6 +1154,7 @@ extern "C"
       mpi_buf->s_num_req = 0;
       mpi_buf->r_num_req = 0;
       dat->mpi_buffer = mpi_buf;
+      printf("MPI Buffer for %s setup with buffer %p.\n",dat->name,dat->mpi_buffer);
     }
 
     // set dirty bits of all data arrays to 0
@@ -1791,6 +1793,9 @@ extern "C"
       if(!recv_okay){
         GPI_FAIL("Status code on MPI_IRecv non-zero\n");
       }
+    
+      printf("Setup GPI stuff for %s, with buff %p\n",dat->name, dat->gpi_buffer);
+      fflush(stdout);
     }
 
     //Barrier before starting GPI communication
@@ -1807,33 +1812,36 @@ extern "C"
     inh_segment_ptr = (char *)xmalloc((size_t)inh_size);
     msc_segment_ptr = (char *)xmalloc((size_t)msc_size);
 
-    GPI_SAFE(gaspi_segment_use(EEH_SEGMENT_ID,
-                               (gaspi_pointer_t)eeh_segment_ptr,
-                               eeh_size,
-                               OP_GPI_WORLD,
-                               GPI_TIMEOUT,
-                               GASPI_ALLOC_DEFAULT))
+    if(eeh_segment_ptr)
+      GPI_SAFE(gaspi_segment_use(EEH_SEGMENT_ID,
+                                (gaspi_pointer_t)eeh_segment_ptr,
+                                eeh_size,
+                                OP_GPI_WORLD,
+                                GPI_TIMEOUT,
+                                GASPI_ALLOC_DEFAULT))
 
-    GPI_SAFE(gaspi_segment_use(ENH_SEGMENT_ID,
-                               (gaspi_pointer_t)enh_segment_ptr,
-                               enh_size,
-                               OP_GPI_WORLD,
-                               GPI_TIMEOUT,
-                               GASPI_ALLOC_DEFAULT))
 
-    GPI_SAFE(gaspi_segment_use(IEH_SEGMENT_ID,
-                               (gaspi_pointer_t)ieh_segment_ptr,
-                               ieh_size,
-                               OP_GPI_WORLD,
-                               GPI_TIMEOUT,
-                               GASPI_ALLOC_DEFAULT))
-
-    GPI_SAFE(gaspi_segment_use(INH_SEGMENT_ID,
-                               (gaspi_pointer_t)inh_segment_ptr,
-                               inh_size,
-                               OP_GPI_WORLD,
-                               GPI_TIMEOUT,
-                               GASPI_ALLOC_DEFAULT))
+    if(enh_segment_ptr)
+      GPI_SAFE(gaspi_segment_use(ENH_SEGMENT_ID,
+                                (gaspi_pointer_t)enh_segment_ptr,
+                                enh_size,
+                                OP_GPI_WORLD,
+                                GPI_TIMEOUT,
+                                GASPI_ALLOC_DEFAULT))
+    if(ieh_segment_ptr)
+      GPI_SAFE(gaspi_segment_use(IEH_SEGMENT_ID,
+                                (gaspi_pointer_t)ieh_segment_ptr,
+                                ieh_size,
+                                OP_GPI_WORLD,
+                                GPI_TIMEOUT,
+                                GASPI_ALLOC_DEFAULT))
+    if(inh_segment_ptr)
+      GPI_SAFE(gaspi_segment_use(INH_SEGMENT_ID,
+                                (gaspi_pointer_t)inh_segment_ptr,
+                                inh_size,
+                                OP_GPI_WORLD,
+                                GPI_TIMEOUT,
+                                GASPI_ALLOC_DEFAULT))
 
     GPI_SAFE(gaspi_segment_use(MSC_SEGMENT_ID,
                                (gaspi_pointer_t)msc_segment_ptr,
@@ -1842,7 +1850,6 @@ extern "C"
                                GPI_TIMEOUT,
                                GASPI_ALLOC_DEFAULT))
 
-    /* TODO Free the pre-exchange memory?*/
     
     GPI_SAFE( gaspi_barrier(OP_GPI_WORLD,GPI_TIMEOUT) )
 
@@ -3403,7 +3410,7 @@ extern "C"
       double tot_time;
       double avg_time;
 
-      printf("___________________________________________________\n");
+      printf("m__________________________________________________\n");
       printf("Performance information on rank %d\n", my_rank);
       printf("Kernel        Count  total time(sec)  Avg time(sec)  \n");
 

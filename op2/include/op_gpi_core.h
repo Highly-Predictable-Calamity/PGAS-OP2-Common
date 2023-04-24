@@ -61,7 +61,7 @@ void op_gpi_exchange_halo_partial(op_arg *arg, int exec_flag);
 
 void op_gpi_waitall(op_arg *arg);
 
-void op_gpi_waitall_args(int nargs, op_arg *args);
+//void op_gpi_waitall_args(int nargs, op_arg *args);
 
 void *op_gpi_perf_time(const char *name, double time);
 

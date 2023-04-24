@@ -54,7 +54,7 @@
     case GASPI_SUCCESS:\
         break;\
     default:\
-        fprintf(stderr, "On rank %d: function %s at %s (%d) has not returned a GASPI return value: (%d). Are you sure it's a GASPI function?\n", _rank, #f, __FILE__, __LINE__, _ret);\
+        fprintf(stderr, "On rank %d: function %s at %s (%d) has returned %d, a non-standard GASPI return value.\n", _rank, #f, __FILE__, __LINE__, _ret);\
         fflush(stderr);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
@@ -82,7 +82,7 @@
     case GASPI_SUCCESS:\
         break;\
     default:\
-        fprintf(stderr, "On rank %d: function %s at %s (%d) has not returned a GASPI return value. You sure it's a GASPI function?\n",_rank, #f, __FILE__, __LINE__);\
+        fprintf(stderr, "On rank %d: function %s at %s (%d) has returned %d, a non-standard GASPI return value.\n", _rank, #f, __FILE__, __LINE__, _ret);\
         fflush(stderr);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
