@@ -92,7 +92,7 @@ void op_init(int argc, char **argv, int diags) {
   MPI_Barrier(OP_MPI_GLOBAL);
   
   int ret;
-  if((ret = gaspi_proc_init(GPI_TIMEOUT)) != GASPI_SUCCESS){
+  if((ret = gaspi_proc_init(GPI_TIMEOUT*10)) != GASPI_SUCCESS){ //TODO check gaspi config - if TCP reduce the timeout multiplier
     fprintf(stderr, "gaspi_proc_init failed. Use GPI debug variant for more information.\n");
     fflush(stderr);
     MPI_Abort(MPI_COMM_WORLD,ret);

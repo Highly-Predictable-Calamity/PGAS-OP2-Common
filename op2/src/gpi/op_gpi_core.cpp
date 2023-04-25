@@ -128,16 +128,27 @@ void op_gpi_waitall_args(int nargs, op_arg *args){
         op_gpi_waitall(&args[n]);
     }
     op_timers_core(&c2, &t2);
+    
     if (OP_kern_max > 0)
         OP_kernels[OP_kern_curr].gpi_time += t2 - t1;
     
     //Extra timer
     op_comm_perf_time("waitall",t2-t1);
-
+    
 #ifdef GPI_VERBOSE
     printf("Finished waitall args\n");
     fflush(stdout);
 #endif
+}
+
+void op_gpi_barrier(){
+  op_timers_core(&c1, &t1);
+  GPI_SAFE(gaspi_barrier(OP_GPI_WORLD, GPI_TIMEOUT))
+  op_timers_core(&c2, &t2);
+  if (OP_kern_max > 0)
+      OP_kernels[OP_kern_curr].gpi_time += t2 - t1;
+
+  op_comm_perf_time("barrier",t2-t1);
 }
 
 void op_gpi_set_dirtybit(int nargs, op_arg *args){

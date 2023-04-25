@@ -347,6 +347,8 @@ int op_gpi_halo_exchanges(op_set set, int nargs, op_arg *args);
 
 void op_gpi_waitall_args(int nargs, op_arg *args);
 
+void op_gpi_barrier();
+
 void op_gpi_reduce_combined(op_arg *args, int nargs);
 
 void op_gpi_reduce_float(op_arg *args, float *data);
