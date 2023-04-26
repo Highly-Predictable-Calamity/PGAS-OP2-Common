@@ -6,13 +6,14 @@
 #include <mpi.h>
 #include <stdlib.h>
 
+
 #define LOCKSTEP(rank, ...) {\
     GPI_SAFE( gaspi_barrier(OP_GPI_GLOBAL, GPI_TIMEOUT) )\
     if(rank==0) printf(__VA_ARGS__);\
 }
 
 
-#define GPI_TIMEOUT 4000 /* 2 Seconds*/
+#define GPI_TIMEOUT 5000 /* 5 Seconds*/
 
 #define GPI_TIMEOUT_EXTRA_TRIES 1
 
@@ -30,6 +31,7 @@
     gaspi_proc_rank(&_rank);                     \
     gaspi_return_t _ret;                         \
     while ((_ret = (f)) == GASPI_QUEUE_FULL) {   \
+        printf("Queue full... waiting\n");      \
         gaspi_return_t _waitret = gaspi_wait ((queue), GASPI_BLOCK);\
         if( _waitret != GASPI_SUCCESS) {         \
             fprintf(stderr, "On rank %d: queue was full and something went wrong with waiting at function %s at %s (%d).\n", _rank, #f, __FILE__, __LINE__);\
@@ -42,12 +44,14 @@
     case GASPI_TIMEOUT:\
         fprintf(stderr, "On rank %d: function %s at %s (%d) timed out.\n",_rank, #f, __FILE__, __LINE__);\
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
         break;\
     case GASPI_ERROR:\
         fprintf(stderr, "On rank %d: function %s at %s (%d) returned GASPI_ERROR.\n",_rank, #f, __FILE__, __LINE__);\
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
         break;\
@@ -56,6 +60,7 @@
     default:\
         fprintf(stderr, "On rank %d: function %s at %s (%d) has returned %d, a non-standard GASPI return value.\n", _rank, #f, __FILE__, __LINE__, _ret);\
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
         break;\
@@ -70,12 +75,14 @@
     case GASPI_TIMEOUT:\
         fprintf(stderr, "On rank %d: function %s at %s (%d) timed out.\n", _rank, #f, __FILE__, __LINE__);\
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
         break;\
     case GASPI_ERROR:\
         fprintf(stderr, "On rank %d: function %s at %s (%d) returned GASPI_ERROR.\n", _rank, #f, __FILE__, __LINE__);\
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
         break;\
@@ -84,6 +91,7 @@
     default:\
         fprintf(stderr, "On rank %d: function %s at %s (%d) has returned %d, a non-standard GASPI return value.\n", _rank, #f, __FILE__, __LINE__, _ret);\
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);\
         MPI_Abort(MPI_COMM_WORLD, 1);\
         break;\
@@ -96,7 +104,23 @@
         fprintf(stderr, "On rank %d: fail at %s (%d).\n",_rank, __FILE__, __LINE__);\
         fprintf(stderr, __VA_ARGS__);   \
         fflush(stderr);\
+        fflush(stdout);\
         gaspi_proc_term(GASPI_BLOCK);                        \
         MPI_Abort(MPI_COMM_WORLD, 1);\
     }                                   \
 
+
+
+typedef struct MemorySegmentHeader MemorySegmentHeader_t;
+
+#define segment_magic 0x87654321
+
+struct MemorySegmentHeader{
+    bool free;
+    unsigned int size;
+    MemorySegmentHeader_t* next;
+    MemorySegmentHeader_t* previous;
+    unsigned int magic;
+};
+
+MemorySegmentHeader_t *intialise_heap(void* base, void* limit);

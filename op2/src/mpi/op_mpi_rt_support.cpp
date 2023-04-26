@@ -85,7 +85,6 @@ void op_exchange_halo(op_arg *arg, int exec_flag) {
        arg->acc == OP_RW /* good for debug || arg->acc == OP_INC*/) &&
       (dat->dirtybit == 1)) {
   
-    printf("Exchanging Halo of dat %s, with buff %p\n",dat->name, dat->mpi_buffer);
     halo_list imp_exec_list = OP_import_exec_list[dat->set->index];
     halo_list imp_nonexec_list = OP_import_nonexec_list[dat->set->index];
 

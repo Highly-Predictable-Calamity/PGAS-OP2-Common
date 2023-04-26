@@ -48,6 +48,7 @@
 #include "../gpi/gpi_utils.h"
 #include <op_gpi_performance.h>
 #include <op_gpi_core.h>
+#include <op_lib_gpi.h>
 #endif
 
 //
@@ -89,11 +90,23 @@ void op_init(int argc, char **argv, int diags) {
   }
   
   MPI_Barrier(OP_MPI_GLOBAL);
+  
+  int ret;
+  if((ret = gaspi_proc_init(GPI_TIMEOUT*10)) != GASPI_SUCCESS){ //TODO check gaspi config - if TCP reduce the timeout multiplier
+    fprintf(stderr, "gaspi_proc_init failed. Use GPI debug variant for more information.\n");
+    fflush(stderr);
+    MPI_Abort(MPI_COMM_WORLD,ret);
+  }
 
-  GPI_SAFE( gaspi_proc_init(GPI_TIMEOUT) )
 
+  //eeh_size = enh_size = ieh_size = inh_size = (gaspi_size_t) GPI_HEAP_SIZE;
+  
   OP_GPI_WORLD = GASPI_GROUP_ALL;
   OP_GPI_GLOBAL= GASPI_GROUP_ALL;
+
+
+  /* Sets up heap segments to be used by temporary dats */
+  op_gpi_setup_segments_heap();
 
   GPI_SAFE( gaspi_barrier(OP_GPI_GLOBAL,GPI_TIMEOUT) )
 
@@ -102,12 +115,15 @@ void op_init(int argc, char **argv, int diags) {
   op_init_core(argc, argv, diags);
 }
 
+
+/* Fortran*/
 void op_mpi_init_soa(int argc, char **argv, int diags, MPI_Fint global,
                      MPI_Fint local, int soa) {
   OP_auto_soa = soa;
   op_mpi_init(argc, argv, diags, global, local);
 }
 
+/* Fortran*/
 void op_mpi_init(int argc, char **argv, int diags, MPI_Fint global,
                  MPI_Fint local) {
   int flag = 0;
@@ -121,19 +137,11 @@ void op_mpi_init(int argc, char **argv, int diags, MPI_Fint global,
   OP_MPI_GLOBAL = MPI_Comm_f2c(global);
 
 #ifdef HAVE_GPI
-  if(!flag){
-    fprintf(stderr, "MPI must be initialised before GPI init.");
-    exit(-1);
-  }
-  
-  MPI_Barrier(OP_MPI_GLOBAL);
-
-  gaspi_proc_init(1500);
-	
-	gaspi_barrier(GASPI_GROUP_ALL ,1500);
-
-	printf("Hello from GPI\n");
+  fprintf(stderr, "GPI not initialised here\n");
+  fflush(stdout);
+  MPI_Abort(MPI_COMM_WORLD, 1);
 #endif
+
   op_init_core(argc, argv, diags);
 }
 
@@ -205,6 +213,14 @@ op_dat op_decl_dat_temp_char(op_set set, int dim, char const *type, int size,
   mpi_buf->r_num_req = 0;
 
   dat->mpi_buffer = mpi_buf;
+
+
+#ifdef HAVE_GPI
+  /* Setup GPI exchange buffers on the dynamic heap */
+  if(op_gpi_buffer_setup(dat, GPI_HEAP_DAT) != 0){
+    GPI_FAIL("Failed to initialise gpi segment data for dat: %s",dat->name)
+  }
+#endif
 
   return dat;
 }
