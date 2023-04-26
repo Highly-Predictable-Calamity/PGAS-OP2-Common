@@ -154,7 +154,7 @@ for nargs in range (1,maxargs+1):
     f.write('  int halo = 0; \n\n')
 
     f.write('  for (int n=0; n<n_upper; n++) {\n')
-    f.write('    if (n==set->core_size) op_gpi_waitall('+str(nargs)+',args);\n')
+    f.write('    if (n==set->core_size) op_gpi_waitall_args('+str(nargs)+',args);\n')
     f.write('    if (n==set->size) halo = 1;\n')
 
     for n in range (0, nargs):
@@ -173,7 +173,7 @@ for nargs in range (1,maxargs+1):
 
 
     f.write('  }\n')
-    f.write('  if ( n_upper == set->core_size || n_upper == 0 )\n    op_gpi_waitall ('+str(nargs)+',args);\n\n')
+    f.write('  if ( n_upper == set->core_size || n_upper == 0 )\n    op_gpi_waitall_args('+str(nargs)+',args);\n\n')
     f.write('  //set dirty bit on datasets touched\n')
     f.write('  op_gpi_set_dirtybit('+str(nargs)+', args);\n\n')
 

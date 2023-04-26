@@ -9,12 +9,19 @@ extern double t1, t2, c1, c2;
 
 #include "../src/gpi/gpi_utils.h"
 
+#define DYNAMIC_SEG_ID_OFFSET 10
+
 #define EEH_SEGMENT_ID 1
 #define ENH_SEGMENT_ID 2
 #define IEH_SEGMENT_ID 3
 #define INH_SEGMENT_ID 4
 
 #define MSC_SEGMENT_ID 5
+
+#define EEH_HEAP_SEGMENT_ID (EEH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
+#define ENH_HEAP_SEGMENT_ID (ENH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
+#define IEH_HEAP_SEGMENT_ID (IEH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
+#define INH_HEAP_SEGMENT_ID (INH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
 
 extern gaspi_group_t OP_GPI_WORLD;
 extern gaspi_group_t OP_GPI_GLOBAL;
@@ -29,6 +36,11 @@ extern char *inh_segment_ptr;
 
 extern char *msc_segment_ptr;
 
+extern char *eeh_heap_segment_ptr;
+extern char *ieh_heap_segment_ptr;
+extern char *enh_heap_segment_ptr;
+extern char *inh_heap_segment_ptr;
+
 /* Struct storing information regarding the expected dat elements from who, where, and where to copy to */
 typedef struct{
   gaspi_rank_t        remote_rank; /* Rank receiving from - (used to identify the struct) */
@@ -39,6 +51,7 @@ typedef struct{
 } op_gpi_recv_obj; 
 
 struct op_gpi_buffer_core{
+  int is_dynamic; /* States if data is stored on dynamic segments */
   int exec_recv_count; /* Number of recieves for import execute segment expect (i.e. number of remote ranks)*/
   int nonexec_recv_count; /* Number of recieves for import non-execute segment expect (i.e number of remote ranks)*/
   op_gpi_recv_obj *exec_recv_objs; /*  For exec elements of this dat, one for each of the expected notifications*/

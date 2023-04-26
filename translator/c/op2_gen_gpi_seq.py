@@ -244,6 +244,12 @@ def op2_gen_gpi_seq(master, date, consts, kernels):
 #
     if ninds>0:
       FOR('n','0','set_size')
+      IF('n==set->core_size')
+      if grouped:
+        code('op_gpi_waitall_grouped(nargs, args, 1);')
+      else:
+        code('op_gpi_waitall_args(nargs, args);')
+      ENDIF()
       if nmaps > 0:
         k = []
         for g_m in range(0,nargs):
@@ -339,7 +345,7 @@ def op2_gen_gpi_seq(master, date, consts, kernels):
     #zero set size issues
     if ninds>0:
       IF('set_size == 0 || set_size == set->core_size')
-      code('op_gpi_waitall(nargs, args);')
+      code('op_gpi_waitall_args(nargs, args);')
       ENDIF()
 
 #
