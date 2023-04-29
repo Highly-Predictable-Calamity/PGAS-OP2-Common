@@ -23,6 +23,11 @@ extern double t1, t2, c1, c2;
 #define IEH_HEAP_SEGMENT_ID (IEH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
 #define INH_HEAP_SEGMENT_ID (INH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
 
+
+#define NOTIF_SHIFT 7
+
+#define ACK_QUEUE 3
+
 extern gaspi_group_t OP_GPI_WORLD;
 extern gaspi_group_t OP_GPI_GLOBAL;
 
@@ -51,6 +56,8 @@ typedef struct{
 } op_gpi_recv_obj; 
 
 struct op_gpi_buffer_core{
+  char *exec_sent_acks; /* Array to store status of messages waiting for acknowledgement */
+  char *nonexec_sent_acks; /* Array to store status of messages waiting for acknowledgement */
   int is_dynamic; /* States if data is stored on dynamic segments */
   int exec_recv_count; /* Number of recieves for import execute segment expect (i.e. number of remote ranks)*/
   int nonexec_recv_count; /* Number of recieves for import non-execute segment expect (i.e number of remote ranks)*/

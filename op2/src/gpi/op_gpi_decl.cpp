@@ -77,6 +77,13 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
     gpi_buf->exec_recv_objs = (op_gpi_recv_obj *)xmalloc(gpi_buf->exec_recv_count * sizeof(op_gpi_recv_obj));
     gpi_buf->nonexec_recv_objs = (op_gpi_recv_obj *)xmalloc(gpi_buf->nonexec_recv_count * sizeof(op_gpi_recv_obj));
 
+    /* Allocate memory for acknowledgement trackers */
+    gpi_buf->exec_sent_acks = (char*)xmalloc(sizeof(char)*exp_exec_list->ranks_size);    
+    gpi_buf->nonexec_sent_acks = (char*)xmalloc(sizeof(char)*exp_nonexec_list->ranks_size);    
+    
+    memset(gpi_buf->exec_sent_acks,0,sizeof(char)*exp_exec_list->ranks_size);
+    memset(gpi_buf->nonexec_sent_acks,0,sizeof(char)*exp_nonexec_list->ranks_size);
+
     dat->gpi_buffer = (void *)gpi_buf;
 
 
