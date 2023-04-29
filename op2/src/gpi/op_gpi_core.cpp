@@ -162,6 +162,8 @@ void *op_gpi_perf_time(const char *name, double time){
 
 void op_gpi_reduce_combined(op_arg *args, int nargs){
   //printf("start\n");
+  op_gpi_barrier();
+
   int nreductions = 0;
   
   for (int i = 0; i < nargs; i++) {
@@ -405,6 +407,7 @@ void op_gpi_reduce_combined(op_arg *args, int nargs){
 
 
 void op_gpi_reduce_float(op_arg *arg, float *data){
+  op_gpi_barrier();
   // I have no idea what this data argument is?
   // it doesn't appear to be used at all.  
   int comm_size, comm_rank;
@@ -488,6 +491,7 @@ void op_gpi_reduce_float(op_arg *arg, float *data){
 }
 
 void op_gpi_reduce_double(op_arg *arg, double *data){
+  op_gpi_barrier();
   // I have no idea what this data argument is?
   // it doesn't appear to be used at all.  
   int comm_size, comm_rank;
@@ -571,6 +575,7 @@ void op_gpi_reduce_double(op_arg *arg, double *data){
 }
 
 void op_gpi_reduce_int(op_arg *arg, int *data){
+  op_gpi_barrier();
   // I have no idea what this data argument is?
   // it doesn't appear to be used at all.  
   int comm_size, comm_rank;
@@ -654,6 +659,7 @@ void op_gpi_reduce_int(op_arg *arg, int *data){
 }
 
 void op_gpi_reduce_bool(op_arg *arg, bool *data){
+  op_gpi_barrier();
   int comm_size, comm_rank;
 
 	GPI_SAFE( gaspi_proc_rank((gaspi_rank_t*)&comm_rank) )
