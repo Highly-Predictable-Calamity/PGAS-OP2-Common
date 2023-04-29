@@ -187,8 +187,8 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
             //printf("Waiting for acknowledgement\n");
 
             GPI_SAFE(gaspi_notify_waitsome(
-                1<<15 | ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
-                dat->index<<NOTIF_SHIFT | exp_nonexec_list->ranks[i],
+                ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
+                1<<15 |dat->index<<NOTIF_SHIFT | exp_nonexec_list->ranks[i],
                 1,
                 &wait_id,
                 GPI_TIMEOUT
