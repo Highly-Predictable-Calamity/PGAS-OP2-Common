@@ -23,6 +23,9 @@ extern double t1, t2, c1, c2;
 extern op_kernel* OP_kernels;
 extern int OP_kern_max, OP_kern_curr;
 
+gaspi_queue_id_t OP2_GPI_QUEUE_ID;
+gaspi_queue_id_t ACK_QUEUE;
+
 
 /* Segment pointers */
 char *eeh_segment_ptr;

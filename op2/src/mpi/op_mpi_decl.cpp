@@ -108,6 +108,13 @@ void op_init(int argc, char **argv, int diags) {
   /* Sets up heap segments to be used by temporary dats */
   op_gpi_setup_segments_heap();
 
+  GPI_SAFE(gaspi_queue_create(&OP2_GPI_QUEUE_ID,GPI_TIMEOUT))
+  GPI_SAFE(gaspi_queue_create(&ACK_QUEUE,GPI_TIMEOUT))
+
+  printf("using general queue ID %d, ACK queue %d\n",OP2_GPI_QUEUE_ID,ACK_QUEUE);
+  fflush(stdout);
+
+
   GPI_SAFE( gaspi_barrier(OP_GPI_GLOBAL,GPI_TIMEOUT) )
 
 #endif

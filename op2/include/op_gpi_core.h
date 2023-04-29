@@ -26,12 +26,15 @@ extern double t1, t2, c1, c2;
 
 #define NOTIF_SHIFT (7)
 
-#define ACK_QUEUE (3)
 
 extern gaspi_group_t OP_GPI_WORLD;
 extern gaspi_group_t OP_GPI_GLOBAL;
 
-#define OP2_GPI_QUEUE_ID 1 /* All remote comm. uses the same queue ID for simplicity. */
+//#define OP2_GPI_QUEUE_ID (1) /* All remote comm. uses the same queue ID for simplicity. */
+//#define ACK_QUEUE (3)
+
+extern gaspi_queue_id_t OP2_GPI_QUEUE_ID;
+extern gaspi_queue_id_t ACK_QUEUE;
 
 /* Given in chars as offsets stored as bytes so pointer arithmetic correct and easy*/
 extern char *eeh_segment_ptr;

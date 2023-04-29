@@ -288,7 +288,7 @@ void op_gpi_waitall(op_arg *arg){
     for(int i=0;i<buff->exec_recv_count;i++){
         GPI_SAFE( gaspi_notify_waitsome(IEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, 
                             dat->index << NOTIF_SHIFT,
-                            10, /* Should be max_expected rank*/
+                            15, /* Should be max_expected rank*/
                             &notif_id, /* Notification id should be the dat index*/
                             GPI_TIMEOUT) )
 
@@ -382,7 +382,7 @@ void op_gpi_waitall(op_arg *arg){
     for(int i=0;i<buff->nonexec_recv_count;i++){
         GPI_SAFE( gaspi_notify_waitsome(INH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, 
                             dat->index<<NOTIF_SHIFT,
-                            10, /* Should be max_expected_rank*/
+                            15, /* Should be max_expected_rank*/
                             &notif_id, /* Notification id should be the dat index*/
                             GPI_TIMEOUT) )
 
