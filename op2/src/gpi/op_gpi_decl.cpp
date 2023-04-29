@@ -79,7 +79,7 @@ int op_gpi_buffer_setup(op_dat dat, int flags){
 
     /* Allocate memory for acknowledgement trackers */
     gpi_buf->exec_sent_acks = (char*)xmalloc(sizeof(int)*exp_exec_list->ranks_size);    
-    gpi_buf->nonexec_sent_acks = (int*)xmalloc(sizeof(int)*exp_nonexec_list->ranks_size);    
+    gpi_buf->nonexec_sent_acks = (char*)xmalloc(sizeof(int)*exp_nonexec_list->ranks_size);    
     memset(gpi_buf->exec_sent_acks,0,sizeof(int)*exp_exec_list->ranks_size);
     memset(gpi_buf->nonexec_sent_acks,0,sizeof(int)*exp_nonexec_list->ranks_size);
 
