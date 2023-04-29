@@ -95,6 +95,33 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
       gaspi_offset_t remote_exec_offset = (gaspi_offset_t) gpi_buf->remote_exec_offsets[i];
 
       gaspi_offset_t local_offset = (gaspi_offset_t) dat->loc_eeh_seg_off+ exp_exec_list->disps[i]*dat->size;
+
+        /* Wait for acknowledgement before send */
+        if(gpi_buf->exec_sent_acks[i]){
+
+            gaspi_notification_id_t wait_id;
+            gaspi_notification_t wait_val;
+            //printf("Waiting for acknowledgement\n");
+
+            GPI_SAFE(gaspi_notify_waitsome(
+                EEH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
+                dat->index<<NOTIF_SHIFT | exp_exec_list->ranks[i],
+                1,
+                &wait_id,
+                GPI_TIMEOUT
+            ) )
+
+            GPI_SAFE(gaspi_notify_reset(
+                EEH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
+                wait_id,
+                &wait_val
+            ))
+
+            gpi_buf->exec_sent_acks[i]=0;
+            //printf("acknowledgement obtained\n");
+        }
+
+
       GPI_QUEUE_SAFE( gaspi_write_notify(
                         EEH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment id*/
                         local_offset, /* local segment offset*/
@@ -112,6 +139,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
       printf("Rank %d sent execute %s dat data to rank %d with not_ID %d \n",gpi_rank,dat->name, exp_exec_list->ranks[i],dat->index <<7 | gpi_rank);
       fflush(stdout);
 #endif
+        gpi_buf->exec_sent_acks[i]=1;
     }
 
 
@@ -142,6 +170,32 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
         
         gaspi_offset_t remote_nonexec_offset = (gaspi_offset_t) gpi_buf->remote_nonexec_offsets[i];
 
+        /* Wait for acknowledgement before send */
+        if(gpi_buf->nonexec_sent_acks[i]){
+
+            gaspi_notification_id_t wait_id;
+            gaspi_notification_t wait_val;
+            //printf("Waiting for acknowledgement\n");
+
+            GPI_SAFE(gaspi_notify_waitsome(
+                ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
+                dat->index<<NOTIF_SHIFT | exp_nonexec_list->ranks[i],
+                1,
+                &wait_id,
+                GPI_TIMEOUT
+            ) )
+
+            GPI_SAFE(gaspi_notify_reset(
+                ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
+                wait_id,
+                &wait_val
+            ))
+
+            gpi_buf->nonexec_sent_acks[i]=0;
+            //printf("acknowledgement obtained\n");
+        }
+
+
         GPI_QUEUE_SAFE( gaspi_write_notify(
                            ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
                            (gaspi_offset_t) dat->loc_enh_seg_off + exp_nonexec_list->disps[i]*dat->size, /* local segment offset*/
@@ -154,6 +208,9 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                            OP2_GPI_QUEUE_ID, /* queue id*/
                            GPI_TIMEOUT /* timeout */
                            ), OP2_GPI_QUEUE_ID )
+
+        
+        gpi_buf->nonexec_sent_acks[i]=1;
 
 #ifdef GPI_VERBOSE
         printf("Rank %d sent non-execute %s dat data to rank %d with not_ID %d.\n",gpi_rank,dat->name, exp_nonexec_list->ranks[i], dat->index <<7 | gpi_rank);
@@ -235,6 +292,16 @@ void op_gpi_waitall(op_arg *arg){
         GPI_SAFE( gaspi_notify_reset(IEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET,
                             notif_id,
                             &notif_value) ) 
+
+        /* Send acknowledgement back to sender */
+        GPI_QUEUE_SAFE(gaspi_notify(
+                EEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
+                recv_rank,
+                recv_dat_index << NOTIF_SHIFT | rank,
+                1,
+                ACK_QUEUE,
+                GPI_TIMEOUT
+        ), ACK_QUEUE)
 
 
         //lookup recv object
@@ -319,6 +386,17 @@ void op_gpi_waitall(op_arg *arg){
                             notif_id,
                             &notif_value) )
         
+        /* Send acknowledgement back to sender */
+        GPI_QUEUE_SAFE(gaspi_notify(
+                ENH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
+                recv_rank,
+                recv_dat_index << NOTIF_SHIFT | rank,
+                1,
+                ACK_QUEUE,
+                GPI_TIMEOUT
+        ), ACK_QUEUE)
+
+
 
         //lookup recv object
         int obj_idx=0;
@@ -348,6 +426,9 @@ void op_gpi_waitall(op_arg *arg){
         memcpy(obj->memcpy_addr, (void*) (segment_ptr + obj->segment_recv_offset), obj->size);
         op_timers_core(&c2, &t2);
         op_comm_perf_time("memcpy",t2-t1);
+
+
+
 
 #ifdef GPI_VERBOSE
         printf("Rank %d successfully handled notification from rank %d for nonexec dat data %s.\n",rank,recv_rank,dat->name);

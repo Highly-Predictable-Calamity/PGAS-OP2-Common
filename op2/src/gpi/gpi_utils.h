@@ -31,7 +31,6 @@
     gaspi_proc_rank(&_rank);                     \
     gaspi_return_t _ret;                         \
     while ((_ret = (f)) == GASPI_QUEUE_FULL) {   \
-        printf("Queue full... waiting\n");      \
         gaspi_return_t _waitret = gaspi_wait ((queue), GASPI_BLOCK);\
         if( _waitret != GASPI_SUCCESS) {         \
             fprintf(stderr, "On rank %d: queue was full and something went wrong with waiting at function %s at %s (%d).\n", _rank, #f, __FILE__, __LINE__);\
