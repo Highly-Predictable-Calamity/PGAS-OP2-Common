@@ -24,9 +24,9 @@ extern double t1, t2, c1, c2;
 #define INH_HEAP_SEGMENT_ID (INH_SEGMENT_ID + DYNAMIC_SEG_ID_OFFSET)
 
 
-#define NOTIF_SHIFT 7
+#define NOTIF_SHIFT (7)
 
-#define ACK_QUEUE 3
+#define ACK_QUEUE (3)
 
 extern gaspi_group_t OP_GPI_WORLD;
 extern gaspi_group_t OP_GPI_GLOBAL;

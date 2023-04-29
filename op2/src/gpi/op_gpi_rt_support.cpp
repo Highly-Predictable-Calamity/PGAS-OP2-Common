@@ -114,6 +114,10 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
             int ack_rank = wait_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
             int ack_dat_index= (int) wait_id>> NOTIF_SHIFT; /* Get only the upper half*/
             
+            //Sanity check
+            if(ack_dat_index!=dat->index || ack_rank !=exp_exec_list->ranks[i]){
+                GPI_FAIL("Accepted incorrect ack notification from unexpected dat.\n Expected: dat %d, rank %d got: dat %d, rank %d\n",dat->index, exp_exec_list->ranks[i], ack_dat_index, ack_rank);
+            }
 
             GPI_SAFE(gaspi_notify_reset(
                 EEH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
@@ -133,7 +137,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                         IEH_SEGMENT_ID  + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* remote segment id*/
                         remote_exec_offset, /* remote offset*/
                         dat->size * exp_exec_list->sizes[i], /* send size*/
-                        dat->index <<NOTIF_SHIFT | gpi_rank, /* notification id*/
+                        dat->index << NOTIF_SHIFT | gpi_rank, /* notification id*/
                         1, /* notification value, 1 bit added for non-zero notif values */
                         OP2_GPI_QUEUE_ID, /* queue id*/
                         GPI_TIMEOUT /* timeout*/
@@ -192,6 +196,11 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
             int ack_rank = wait_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
             int ack_dat_index= (int) wait_id>> NOTIF_SHIFT; /* Get only the upper half*/
             
+            //Sanity check
+            if(ack_dat_index!=dat->index || ack_rank !=exp_nonexec_list->ranks[i]){
+                GPI_FAIL("Accepted incorrect ack notification from unexpected dat.\n Expected: dat %d, rank %d got: dat %d, rank%d\n",dat->index, exp_nonexec_list->ranks[i], ack_dat_index, ack_rank)
+            }
+
             GPI_SAFE(gaspi_notify_reset(
                 ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
                 wait_id,
