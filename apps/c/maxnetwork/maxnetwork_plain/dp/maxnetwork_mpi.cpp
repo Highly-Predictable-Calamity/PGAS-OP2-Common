@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
   /* read in grid from disk on root processor */
   FILE *fp;
 
-  if ((fp = fopen("new_grid_2880000.dat", "r")) == NULL) {
+  if ((fp = fopen("new_grid.dat", "r")) == NULL) {
     op_printf("can't open file new_grid.dat\n");
     exit(-1);
   }
@@ -372,13 +372,10 @@ int main(int argc, char **argv) {
   // initialise timers for total execution wall time
   op_timers(&cpu_t1, &wall_t1);
 
-  niter = 1000;
+  niter = 10000;
   for (int iter = 1; iter <= niter; iter++) {
 
     // save old flow solution
-    // op_par_loop(save_soln, "save_soln", cells,
-    //             op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_READ),
-    //             op_arg_dat(p_qold, -1, OP_ID, 4, "double", OP_WRITE));
 
     // //  predictor/corrector update loop
 
@@ -386,26 +383,8 @@ int main(int argc, char **argv) {
 
     //   //    calculate area/timstep
       // op_mpi_set_dirtybit(1,&op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_WRITE));
-      // op_par_loop(adt_calc, "adt_calc", cells,
-      //             op_arg_dat(p_x, 0, pcell, 2, "double", OP_READ),
-      //             op_arg_dat(p_x, 1, pcell, 2, "double", OP_READ),
-      //             op_arg_dat(p_x, 2, pcell, 2, "double", OP_READ),
-      //             op_arg_dat(p_x, 3, pcell, 2, "double", OP_READ),
-      //             op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_READ),
-      //             op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_WRITE));
 
     //   //LOCKSTEP(my_rank, "Res after adt: %d \n", rms)
-
-    //   //    calculate flux residual
-      // op_par_loop(res_calc, "res_calc", edges,
-      //             op_arg_dat(p_x, 0, pedge, 2, "double", OP_READ),
-      //             op_arg_dat(p_x, 1, pedge, 2, "double", OP_READ),
-      //             op_arg_dat(p_q, 0, pecell, 4, "double", OP_READ),
-      //             op_arg_dat(p_q, 1, pecell, 4, "double", OP_READ),
-      //             op_arg_dat(p_adt, 0, pecell, 1, "double", OP_READ),
-      //             op_arg_dat(p_adt, 1, pecell, 1, "double", OP_READ),
-      //             op_arg_dat(p_res, 0, pecell, 4, "double", OP_RW),
-      //             op_arg_dat(p_res, 1, pecell, 4, "double", OP_RW));
 
       op_par_loop(do_nothing_once, "do_nothing_once", bedges,
                   op_arg_dat(p_q, 0, pbecell, 4, "double", OP_RW),
@@ -414,20 +393,10 @@ int main(int argc, char **argv) {
       op_par_loop(do_nothing_twice, "do_nothing_twice", bedges,
                   op_arg_dat(p_q, 0, pbecell, 4, "double", OP_RW),
                   op_arg_dat(p_res, 0, pbecell, 4, "double", OP_RW));
-#ifdef HAVE_GPI
-      op_gpi_barrier();
-#endif
 
       //    update flow field
 
       // rms = 0.0;
-
-      // op_par_loop(update, "update", cells,
-      //             op_arg_dat(p_qold, -1, OP_ID, 4, "double", OP_READ),
-      //             op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_WRITE),
-      //             op_arg_dat(p_res, -1, OP_ID, 4, "double", OP_RW),
-      //             op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_READ),
-      //             op_arg_gbl(&rms, 1, "double", OP_INC));
       
       //LOCKSTEP(my_rank, "--------- Res %d after update loop: %f------------- \n", iter, rms)
     
