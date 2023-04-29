@@ -309,6 +309,16 @@ void op_gpi_waitall(op_arg *arg){
                             notif_id,
                             &notif_value) ) 
 
+        /* Send acknowledgement back to sender */
+        GPI_QUEUE_SAFE(gaspi_notify(
+                EEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
+                recv_rank,
+                recv_dat_index << NOTIF_SHIFT | rank,
+                1,
+                ACK_QUEUE,
+                GPI_TIMEOUT
+        ), ACK_QUEUE)
+
 
 
         //lookup recv object
@@ -403,6 +413,17 @@ void op_gpi_waitall(op_arg *arg){
                             notif_id,
                             &notif_value) )
         
+        /* Send acknowledgement back to sender */
+        GPI_QUEUE_SAFE(gaspi_notify(
+                ENH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
+                recv_rank,
+                recv_dat_index << NOTIF_SHIFT | rank,
+                1,
+                ACK_QUEUE,
+                GPI_TIMEOUT
+        ), ACK_QUEUE)
+
+
 
 
 
