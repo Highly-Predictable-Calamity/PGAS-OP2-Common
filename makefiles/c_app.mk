@@ -111,7 +111,7 @@ GPI_SEQ_SRC := $(APP_ENTRY_GPI)
 define SRC_template =
 $(1)_SRC := $$(APP_ENTRY_OP) $$(subst %,$$(APP_ENTRY_BASENAME),$(2))
 MPI_$(1)_SRC := $$(APP_ENTRY_MPI_OP) $$(subst %,$$(APP_ENTRY_MPI_BASENAME),$(2))
-#GPI_$(1)_SRC := $$(APP_ENTRY_GPI_OP) $$(subst %,$$(APP_ENTRY_GPI_BASENAME),$(2))
+GPI_$(1)_SRC := $$(APP_ENTRY_GPI_OP) $$(subst %,$$(APP_ENTRY_GPI_BASENAME),$(2))
 endef
 
 $(eval $(call SRC_template,GENSEQ,seq/%_seqkernels.cpp))
@@ -133,7 +133,7 @@ MPI_CUDA_HYB_SRC := $(APP_ENTRY_MPI_OP) \
 	cuda/$(APP_NAME)_mpi_hybkernels_cpu.o cuda/$(APP_NAME)_mpi_hybkernels_gpu.o
 
 # GPI - Move to SRC template once more than SEQ and GENSEQ is supported
-#GPI_GENSEQ_SRC := $(APP_ENTRY_GPI_OP) seq/$(APP_ENTRY_GPI_BASENAME)_seqkernels.cpp
+GPI_GENSEQ_SRC := $(APP_ENTRY_GPI_OP) gpi_seq/$(APP_ENTRY_GPI_BASENAME)_gpiseqkernels.cpp
 
 # $(1) = variant name
 # $(2) = additional flags
@@ -146,8 +146,8 @@ $$(APP_NAME)_$(1): .generated
 $$(APP_NAME)_mpi_$(1): .generated
 	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) $$(OP2_LIB_$(4)) -o $$@
 
-#$$(APP_NAME)_gpi_$(1): .generated
-#	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(GPI_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) -L$$(OP2_LIB) -lop2_gpi  -L/usr/local//lib -lparmetis -lmetis  $$(GPI_LIB)  -o $$@
+$$(APP_NAME)_gpi_$(1): .generated
+	$$(MPICXX) $$(CXXFLAGS) $(2) $$(OP2_INC) $$(GPI_INC) $$(MPI_$(call UPPERCASE,$(1))_SRC) -L$$(OP2_LIB) -lop2_gpi  -L/usr/local//lib -lparmetis -lmetis  $$(GPI_LIB)  -o $$@
 endef
 
 # the same as RULE_template_base but it first strips its arguments of extra space
@@ -162,7 +162,7 @@ $(eval $(call RULE_template, openmp,   $(OMP_CPPFLAGS),                         
 $(eval $(call RULE_template, openmp4,  $(OMP_OFFLOAD_CPPFLAGS) -DOP2_WITH_OMP4, OPENMP4,    ))
 $(eval $(call RULE_template, cuda,,                                             CUDA,    MPI_CUDA))
 $(eval $(call RULE_template, cuda_hyb, $(OMP_CPPFLAGS),                         CUDA,    MPI_CUDA))
-#$(eval $(call RULE_template, gpi,,                                              SEQ,     GPI))
+$(eval $(call RULE_template, gpi,,                                              SEQ,     GPI))
 
 $(APP_NAME)_cuda: cuda/$(APP_NAME)_kernels.o
 $(APP_NAME)_mpi_cuda: cuda/$(APP_NAME)_mpi_kernels.o
@@ -174,8 +174,8 @@ $(APP_NAME)_mpi_cuda_hyb: cuda/$(APP_NAME)_mpi_hybkernels_gpu.o cuda/$(APP_NAME)
 $(APP_NAME)_gpi_seq: .generated
 	$(MPICXX) $(CXXFLAGS) $(OP2_INC) $(GPI_INC) $(GPI_SEQ_SRC) $(OP2_LIB_GPI) $(GPI_LIB) -o $@
 
-#$(APP_NAME)_gpi_genseq: .generated
-#	$(MPICXX) $(CXXFLAGS) $(OP2_INC) $(GPI_INC) $(GPI_GENSEQ_SRC) $(OP2_LIB_GPI) $(GPI_LIB) -o $@
+$(APP_NAME)_gpi_genseq: .generated
+	$(MPICXX) $(CXXFLAGS) $(OP2_INC) $(GPI_INC) $(GPI_GENSEQ_SRC) $(OP2_LIB_GPI) $(GPI_LIB) -o $@
 
 cuda/$(APP_NAME)_kernels.o: .generated
 	$(NVCC) $(NVCCFLAGS) $(OP2_INC) -c cuda/$(APP_ENTRY_BASENAME)_kernels.cu -o $@
