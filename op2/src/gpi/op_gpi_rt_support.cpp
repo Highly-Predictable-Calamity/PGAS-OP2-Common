@@ -111,8 +111,8 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                 GPI_TIMEOUT
             ) )
             
-            int ack_rank = wait_id & ((1<<7)-1); /* Filter out the upper half */
-            int ack_dat_index= (int) wait_id>> 7; /* Get only the upper half*/
+            int ack_rank = wait_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
+            int ack_dat_index= (int) wait_id>> NOTIF_SHIFT; /* Get only the upper half*/
             
             //Sanity check
             if(ack_dat_index!=dat->index || ack_rank !=exp_nonexec_list->ranks[i]){
@@ -137,14 +137,14 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                         IEH_SEGMENT_ID  + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* remote segment id*/
                         remote_exec_offset, /* remote offset*/
                         dat->size * exp_exec_list->sizes[i], /* send size*/
-                        dat->index <<7 | gpi_rank, /* notification id*/
+                        dat->index <<NOTIF_SHIFT | gpi_rank, /* notification id*/
                         1, /* notification value, 1 bit added for non-zero notif values */
                         OP2_GPI_QUEUE_ID, /* queue id*/
                         GPI_TIMEOUT /* timeout*/
                         ), OP2_GPI_QUEUE_ID )
 
 #ifdef GPI_VERBOSE
-      printf("Rank %d sent execute %s dat data to rank %d with not_ID %d \n",gpi_rank,dat->name, exp_exec_list->ranks[i],dat->index <<7 | gpi_rank);
+      printf("Rank %d sent execute %s dat data to rank %d with not_ID %d \n",gpi_rank,dat->name, exp_exec_list->ranks[i],dat->index <<NOTIF_SHIFT | gpi_rank);
       fflush(stdout);
 #endif
         gpi_buf->exec_sent_acks[i]=1;
@@ -193,8 +193,8 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                 GPI_TIMEOUT
             ) )
 
-            int ack_rank = wait_id & ((1<<7)-1); /* Filter out the upper half */
-            int ack_dat_index= (int) wait_id>> 7; /* Get only the upper half*/
+            int ack_rank = wait_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
+            int ack_dat_index= (int) wait_id>> NOTIF_SHIFT; /* Get only the upper half*/
             
             //Sanity check
             if(ack_dat_index!=dat->index || ack_rank !=exp_nonexec_list->ranks[i]){
@@ -219,7 +219,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
                            INH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* remote segment */
                            remote_nonexec_offset, /* remote segment offset*/
                            dat->size * exp_nonexec_list->sizes[i], /* data to send (in bytes)*/
-                           dat->index<<7 | gpi_rank, /* notification id*/
+                           dat->index<<NOTIF_SHIFT | gpi_rank, /* notification id*/
                            1, /* notification value. 1 added for non-zero notif values */
                            OP2_GPI_QUEUE_ID, /* queue id*/
                            GPI_TIMEOUT /* timeout */
@@ -229,7 +229,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
         gpi_buf->nonexec_sent_acks[i]=1;
 
 #ifdef GPI_VERBOSE
-        printf("Rank %d sent non-execute %s dat data to rank %d with not_ID %d.\n",gpi_rank,dat->name, exp_nonexec_list->ranks[i], dat->index <<7 | gpi_rank);
+        printf("Rank %d sent non-execute %s dat data to rank %d with not_ID %d.\n",gpi_rank,dat->name, exp_nonexec_list->ranks[i], dat->index <<NOTIF_SHIFT | gpi_rank);
         fflush(stdout);
 #endif
     }
@@ -287,7 +287,7 @@ void op_gpi_waitall(op_arg *arg){
     /* Receive for exec elements*/
     for(int i=0;i<buff->exec_recv_count;i++){
         GPI_SAFE( gaspi_notify_waitsome(IEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, 
-                            dat->index << 7,
+                            dat->index << NOTIF_SHIFT,
                             10, /* Should be max_expected rank*/
                             &notif_id, /* Notification id should be the dat index*/
                             GPI_TIMEOUT) )
@@ -296,8 +296,8 @@ void op_gpi_waitall(op_arg *arg){
         printf("Rank %d received exec not_ID %d.\n",rank,notif_id);
 #endif
 
-        recv_rank = notif_id & ((1<<7)-1); /* Filter out the upper half */
-        recv_dat_index= (int) notif_id>> 7; /* Get only the upper half*/
+        recv_rank = notif_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
+        recv_dat_index= (int) notif_id>> NOTIF_SHIFT; /* Get only the upper half*/
         
         //Sanity check
         if(recv_dat_index!=dat->index){
@@ -381,7 +381,7 @@ void op_gpi_waitall(op_arg *arg){
     /* Receive for nonexec elements*/
     for(int i=0;i<buff->nonexec_recv_count;i++){
         GPI_SAFE( gaspi_notify_waitsome(INH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, 
-                            dat->index<<7,
+                            dat->index<<NOTIF_SHIFT,
                             10, /* Should be max_expected_rank*/
                             &notif_id, /* Notification id should be the dat index*/
                             GPI_TIMEOUT) )
@@ -391,8 +391,8 @@ void op_gpi_waitall(op_arg *arg){
         printf("Rank %d received non_exec not_ID %d.\n",rank, notif_id);
 #endif
 
-        recv_rank = (int) notif_id & ((1<<7)-1); /* Filter out the upper half */
-        recv_dat_index= (int) notif_id>>7; /* get only the upper half*/
+        recv_rank = (int) notif_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
+        recv_dat_index= (int) notif_id>>NOTIF_SHIFT; /* get only the upper half*/
         
         if(recv_dat_index!=dat->index){
             GPI_FAIL("Accepted nonexec notification from unexpected dat.\n Expected: %d got:%d\n",dat->index, notif_id);
