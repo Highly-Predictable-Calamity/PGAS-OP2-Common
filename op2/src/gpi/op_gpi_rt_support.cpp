@@ -293,15 +293,6 @@ void op_gpi_waitall(op_arg *arg){
                             notif_id,
                             &notif_value) ) 
 
-        /* Send acknowledgement back to sender */
-        GPI_QUEUE_SAFE(gaspi_notify(
-                EEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
-                recv_rank,
-                recv_dat_index << NOTIF_SHIFT | rank,
-                1,
-                ACK_QUEUE,
-                GPI_TIMEOUT
-        ), ACK_QUEUE)
 
 
         //lookup recv object
@@ -334,6 +325,16 @@ void op_gpi_waitall(op_arg *arg){
         memcpy(obj->memcpy_addr, (void*) (segment_ptr + obj->segment_recv_offset), obj->size);
         op_timers_core(&c2, &t2);
         op_comm_perf_time("memcpy",t2-t1);
+        
+        /* Send acknowledgement back to sender */
+        GPI_QUEUE_SAFE(gaspi_notify(
+                EEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
+                recv_rank,
+                recv_dat_index << NOTIF_SHIFT | rank,
+                1,
+                ACK_QUEUE,
+                GPI_TIMEOUT
+        ), ACK_QUEUE)
 
 #ifdef GPI_VERBOSE  
         printf("Rank %d successfully handled notification from rank %d for exec dat data %s.\n",rank, recv_rank,dat->name);
@@ -386,15 +387,6 @@ void op_gpi_waitall(op_arg *arg){
                             notif_id,
                             &notif_value) )
         
-        /* Send acknowledgement back to sender */
-        GPI_QUEUE_SAFE(gaspi_notify(
-                ENH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
-                recv_rank,
-                recv_dat_index << NOTIF_SHIFT | rank,
-                1,
-                ACK_QUEUE,
-                GPI_TIMEOUT
-        ), ACK_QUEUE)
 
 
 
@@ -428,6 +420,15 @@ void op_gpi_waitall(op_arg *arg){
         op_comm_perf_time("memcpy",t2-t1);
 
 
+        /* Send acknowledgement back to sender */
+        GPI_QUEUE_SAFE(gaspi_notify(
+                ENH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
+                recv_rank,
+                recv_dat_index << NOTIF_SHIFT | rank,
+                1,
+                ACK_QUEUE,
+                GPI_TIMEOUT
+        ), ACK_QUEUE)
 
 
 #ifdef GPI_VERBOSE
