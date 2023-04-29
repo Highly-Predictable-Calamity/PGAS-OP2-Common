@@ -116,7 +116,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
             
             //Sanity check
             if(ack_dat_index!=dat->index || ack_rank !=exp_nonexec_list->ranks[i]){
-                GPI_FAIL("Accepted incorrect ack notification from unexpected dat.\n Expected: dat %d, rank %d got: dat %d, rank%d\n",dat->index, ack_dat_index, exp_exec_list->ranks[i],ack_rank);
+                GPI_FAIL("Accepted incorrect ack notification from unexpected dat.\n Expected: dat %d, rank %d got: dat %d, rank%d\n",dat->index, exp_exec_list->ranks[i], ack_dat_index, ack_rank);
             }
 
             GPI_SAFE(gaspi_notify_reset(
@@ -198,7 +198,7 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
             
             //Sanity check
             if(ack_dat_index!=dat->index || ack_rank !=exp_nonexec_list->ranks[i]){
-                GPI_FAIL("Accepted incorrect ack notification from unexpected dat.\n Expected: dat %d, rank %d got: dat %d, rank%d\n",dat->index, ack_dat_index, exp_nonexec_list->ranks[i],ack_rank)
+                GPI_FAIL("Accepted incorrect ack notification from unexpected dat.\n Expected: dat %d, rank %d got: dat %d, rank%d\n",dat->index, exp_nonexec_list->ranks[i], ack_dat_index, ack_rank)
             }
 
             GPI_SAFE(gaspi_notify_reset(
