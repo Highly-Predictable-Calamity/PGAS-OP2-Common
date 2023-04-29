@@ -35,6 +35,7 @@ extern gaspi_group_t OP_GPI_GLOBAL;
 
 extern gaspi_queue_id_t OP2_GPI_QUEUE_ID;
 extern gaspi_queue_id_t ACK_QUEUE;
+extern gaspi_queue_id_t OP2_GPI_REDUCE_QUEUE;
 
 /* Given in chars as offsets stored as bytes so pointer arithmetic correct and easy*/
 extern char *eeh_segment_ptr;

@@ -25,6 +25,7 @@ extern int OP_kern_max, OP_kern_curr;
 
 gaspi_queue_id_t OP2_GPI_QUEUE_ID;
 gaspi_queue_id_t ACK_QUEUE;
+gaspi_queue_id_t OP2_GPI_REDUCE_QUEUE;
 
 
 /* Segment pointers */
@@ -214,7 +215,7 @@ void op_gpi_reduce_combined(op_arg *args, int nargs){
   gaspi_size_t size = nbytes;
   gaspi_segment_id_t remote_segment = local_segment;
   gaspi_offset_t remote_offset = size;
-  gaspi_queue_id_t queue = 2;
+  gaspi_queue_id_t queue = OP2_GPI_REDUCE_QUEUE;
   gaspi_group_t group = GASPI_GROUP_ALL;
   gaspi_timeout_t timeout = GASPI_BLOCK;
 
@@ -437,7 +438,7 @@ void op_gpi_reduce_float(op_arg *arg, float *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 2;  // TODO
+    gaspi_queue_id_t queue = OP2_GPI_REDUCE_QUEUE;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
@@ -521,7 +522,7 @@ void op_gpi_reduce_double(op_arg *arg, double *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 2;  // TODO
+    gaspi_queue_id_t queue = OP2_GPI_REDUCE_QUEUE;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
@@ -605,7 +606,7 @@ void op_gpi_reduce_int(op_arg *arg, int *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 2;  // TODO
+    gaspi_queue_id_t queue = OP2_GPI_REDUCE_QUEUE;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
@@ -689,7 +690,7 @@ void op_gpi_reduce_bool(op_arg *arg, bool *data){
     gaspi_size_t size = (gaspi_size_t) datasize;
     gaspi_segment_id_t remote_segment = local_segment;
     gaspi_offset_t remote_offset = size;
-    gaspi_queue_id_t queue = 2;  // TODO
+    gaspi_queue_id_t queue = OP2_GPI_REDUCE_QUEUE;  // TODO
     gaspi_group_t group = OP_GPI_WORLD;
     gaspi_timeout_t timeout = GPI_TIMEOUT;
     
