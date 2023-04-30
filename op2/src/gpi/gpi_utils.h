@@ -13,7 +13,7 @@
 }
 
 
-#define GPI_TIMEOUT 5000 /* 5 Seconds*/
+#define GPI_TIMEOUT 10000 /* 5 Seconds*/
 
 #define GPI_TIMEOUT_EXTRA_TRIES 1
 
