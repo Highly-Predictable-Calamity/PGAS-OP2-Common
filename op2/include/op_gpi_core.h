@@ -25,6 +25,8 @@ extern double t1, t2, c1, c2;
 
 
 #define NOTIF_SHIFT (7)
+#define ACK_BIT     (1<<15)
+#define EXP_BIT     (1<<14)
 
 
 extern gaspi_group_t OP_GPI_WORLD;

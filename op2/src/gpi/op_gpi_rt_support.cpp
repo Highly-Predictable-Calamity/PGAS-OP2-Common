@@ -105,13 +105,13 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
 
             GPI_SAFE(gaspi_notify_waitsome(
                 EEH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
-                1<<15 | dat->index<<NOTIF_SHIFT | exp_exec_list->ranks[i],
+                ACK_BIT | EXP_BIT | dat->index<<NOTIF_SHIFT | exp_exec_list->ranks[i],
                 1,
                 &wait_id,
                 GPI_TIMEOUT
             ) )
             
-            wait_id=wait_id & ((1<<15) -1);
+            wait_id=wait_id & (EXP_BIT -1);
             int ack_rank = wait_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
             int ack_dat_index= (int) wait_id>> NOTIF_SHIFT; /* Get only the upper half*/
             
@@ -188,13 +188,13 @@ void op_gpi_exchange_halo(op_arg *arg, int exec_flag){
 
             GPI_SAFE(gaspi_notify_waitsome(
                 ENH_SEGMENT_ID + gpi_buf->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* local segment */
-                1<<15 |dat->index<<NOTIF_SHIFT | exp_nonexec_list->ranks[i],
+                ACK_BIT | dat->index<<NOTIF_SHIFT | exp_nonexec_list->ranks[i],
                 1,
                 &wait_id,
                 GPI_TIMEOUT
             ) )
 
-            wait_id=wait_id & ((1<<15) -1);
+            wait_id=wait_id & (ACK_BIT -1);
             int ack_rank = wait_id & ((1<<NOTIF_SHIFT)-1); /* Filter out the upper half */
             int ack_dat_index= (int) wait_id>> NOTIF_SHIFT; /* Get only the upper half*/
             
@@ -348,7 +348,7 @@ void op_gpi_waitall(op_arg *arg){
         GPI_QUEUE_SAFE(gaspi_notify(
                 EEH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
                 recv_rank,
-                1<<15 | recv_dat_index << NOTIF_SHIFT | rank,
+                ACK_BIT| EXP_BIT | recv_dat_index << NOTIF_SHIFT | rank,
                 1,
                 ACK_QUEUE,
                 GPI_TIMEOUT
@@ -442,7 +442,7 @@ void op_gpi_waitall(op_arg *arg){
         GPI_QUEUE_SAFE(gaspi_notify(
                 ENH_SEGMENT_ID + buff->is_dynamic*DYNAMIC_SEG_ID_OFFSET, /* segment */
                 recv_rank,
-                1<<15 | recv_dat_index << NOTIF_SHIFT | rank,
+                ACK_BIT | recv_dat_index << NOTIF_SHIFT | rank,
                 1,
                 ACK_QUEUE,
                 GPI_TIMEOUT
