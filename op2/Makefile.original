@@ -33,12 +33,6 @@ ifeq ($(HAVE_C),true)
   endif
 
   ifeq ($(MPI_IS_BUILDABLE),true)
-    ifeq ($(HAVE_GPI),true)
-      OP2_BUILDABLE_LIBS += gpi
-    endif
-  endif
-
-  ifeq ($(MPI_IS_BUILDABLE),true)
     OP2_BUILDABLE_LIBS += mpi
   endif
 
@@ -62,12 +56,10 @@ clean:
 	-rm -rf $(LIB)
 	-rm -rf $(MOD)
 
-#	externlib/op_util.o \
-#	common/op_perf_common.o \
 # Base set of objects shared across multiple libraries
-OP2_BASE := $(addprefix $(OBJ)/,\
-	core/op_lib_core.o \
-	core/op_rt_support.o)
+OP2_BASE := $(addprefix $(OBJ)/core/,\
+	op_lib_core.o \
+	op_rt_support.o)
 
 OP2_FOR_BASE := $(addprefix $(OBJ)/fortran/,\
 	op2_for_declarations.o \
@@ -143,7 +135,6 @@ OP2_MPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
 	mpi/op_mpi_rt_support.o \
 	mpi/op_mpi_hdf5.o \
 	mpi/op_mpi_util.o \
-	common/op_perf_common+mpi.o \
 	externlib/op_util.o \
 	externlib/op_renumber.o)
 
@@ -166,22 +157,6 @@ OP2_FOR_MPI_CUDA := $(OP2_MPI_CUDA) $(OP2_FOR_BASE_MPI_CUDA) $(addprefix $(OBJ)/
 	op2_for_rt_wrappers_cuda.o \
 	cudaConfigurationParams.o)
 
-OP2_GPI := $(OP2_BASE) $(addprefix $(OBJ)/,\
-	gpi/op_gpi_core.o \
-	gpi/op_gpi_decl.o\
-	gpi/op_gpi_performance.o \
-	gpi/op_gpi_rt_support.o \
-	gpi/op_gpi_util.o \
-	externlib/op_renumber+gpi.o \
-	externlib/op_util+gpi.o \
-	common/op_perf_common+gpi.o \
-	gpi/op_mpi_core+gpi.o \
-	gpi/op_mpi_part_core+gpi.o \
-	gpi/op_mpi_decl+gpi.o \
-	gpi/op_mpi_rt_support+gpi.o \
-	gpi/op_mpi_hdf5+gpi.o \
-	gpi/op_mpi_util+gpi.o)
-
 # Directory rules
 $(OBJ):
 	@mkdir -p $@
@@ -199,19 +174,6 @@ $(MOD)/%:
 
 # Rules for files with a specific compilation setup
 
-# Compile GPI-specific versions of certain files
-$(OBJ)/externlib/%+gpi.o: src/externlib/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
-
-$(OBJ)/common/%+gpi.o: src/common/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
-
-$(OBJ)/gpi/%+gpi.o: src/mpi/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
-
-$(OBJ)/gpi/%.o: src/gpi/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) $(GPI_INC) -c $< -o $@
-
 $(OBJ)/externlib/op_hdf5.o: src/externlib/op_hdf5.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) $(INC) $(HDF5_SEQ_INC) -c $< -o $@
 
@@ -227,14 +189,7 @@ $(OBJ)/cuda/%.o: src/cuda/%.cpp | $(OBJ)
 $(OBJ)/openmp4/%.o: src/openmp4/%.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OMP_OFFLOAD_CXXFLAGS) $(INC) -c $< -o $@
 
-# Common folder for SEQ non-mpi/gpi version
-$(OBJ)/common/%.o: src/common/%.cpp | $(OBJ)
-	$(CXX) $(CXXFLAGS) $(INC) -c $< -o $@
-
 $(OBJ)/mpi/%.o: src/mpi/%.cpp | $(OBJ)
-	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
-
-$(OBJ)/common/%+mpi.o: src/common/%.cpp | $(OBJ)
 	$(MPICXX) $(CXXFLAGS) $(INC) $(HDF5_PAR_INC) -c $< -o $@
 
 $(OBJ)/mpi/%.o: src/mpi/%.cu | $(OBJ)

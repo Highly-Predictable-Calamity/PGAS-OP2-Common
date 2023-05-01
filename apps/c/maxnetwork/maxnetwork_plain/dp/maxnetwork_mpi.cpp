@@ -62,9 +62,13 @@ double gam, gm1, cfl, eps, mach, alpha, qinf[4];
 //
 
 #include "op_lib_mpi.h"
+#ifdef HAVE_GPI
+#include "op_lib_gpi.h"
+#endif
 #include "op_seq.h"
-#include "op_perf_common.h"
 
+#include "op_perf_common.h"
+#include "op_gpi_performance.h"
 
 //
 // kernel routines for parallel loops
@@ -75,6 +79,9 @@ double gam, gm1, cfl, eps, mach, alpha, qinf[4];
 #include "res_calc.h"
 #include "save_soln.h"
 #include "update.h"
+#include "do_nothing.h"
+#include "do_nothing_twice.h"
+#include "do_nothing_once.h"
 
 //
 // user declared functions
@@ -365,122 +372,94 @@ int main(int argc, char **argv) {
   // initialise timers for total execution wall time
   op_timers(&cpu_t1, &wall_t1);
 
-  niter = 1000;
+  niter = 10000;
   for (int iter = 1; iter <= niter; iter++) {
 
     // save old flow solution
-    op_par_loop(save_soln, "save_soln", cells,
-                op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_READ),
-                op_arg_dat(p_qold, -1, OP_ID, 4, "double", OP_WRITE));
 
-    //  predictor/corrector update loop
+    // //  predictor/corrector update loop
 
-    for (int k = 0; k < 2; k++) {
+    // for (int k = 0; k < 2; k++) {
 
-      //    calculate area/timstep
-      op_par_loop(adt_calc, "adt_calc", cells,
-                  op_arg_dat(p_x, 0, pcell, 2, "double", OP_READ),
-                  op_arg_dat(p_x, 1, pcell, 2, "double", OP_READ),
-                  op_arg_dat(p_x, 2, pcell, 2, "double", OP_READ),
-                  op_arg_dat(p_x, 3, pcell, 2, "double", OP_READ),
-                  op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_READ),
-                  op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_WRITE));
+    //   //    calculate area/timstep
+      // op_mpi_set_dirtybit(1,&op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_WRITE));
 
-      //LOCKSTEP(my_rank, "Res after adt: %d \n", rms)
+    //   //LOCKSTEP(my_rank, "Res after adt: %d \n", rms)
 
-      //    calculate flux residual
-      op_par_loop(res_calc, "res_calc", edges,
-                  op_arg_dat(p_x, 0, pedge, 2, "double", OP_READ),
-                  op_arg_dat(p_x, 1, pedge, 2, "double", OP_READ),
-                  op_arg_dat(p_q, 0, pecell, 4, "double", OP_READ),
-                  op_arg_dat(p_q, 1, pecell, 4, "double", OP_READ),
-                  op_arg_dat(p_adt, 0, pecell, 1, "double", OP_READ),
-                  op_arg_dat(p_adt, 1, pecell, 1, "double", OP_READ),
-                  op_arg_dat(p_res, 0, pecell, 4, "double", OP_INC),
-                  op_arg_dat(p_res, 1, pecell, 4, "double", OP_INC));
+      op_par_loop(do_nothing_once, "do_nothing_once", bedges,
+                  op_arg_dat(p_q, 0, pbecell, 4, "double", OP_RW),
+                  op_arg_dat(p_res, 0, pbecell, 4, "double", OP_RW));
 
-      op_par_loop(bres_calc, "bres_calc", bedges,
-                  op_arg_dat(p_x, 0, pbedge, 2, "double", OP_READ),
-                  op_arg_dat(p_x, 1, pbedge, 2, "double", OP_READ),
-                  op_arg_dat(p_q, 0, pbecell, 4, "double", OP_READ),
-                  op_arg_dat(p_adt, 0, pbecell, 1, "double", OP_READ),
-                  op_arg_dat(p_res, 0, pbecell, 4, "double", OP_INC),
-                  op_arg_dat(p_bound, -1, OP_ID, 1, "int", OP_READ));
+      op_par_loop(do_nothing_twice, "do_nothing_twice", bedges,
+                  op_arg_dat(p_q, 0, pbecell, 4, "double", OP_RW),
+                  op_arg_dat(p_res, 0, pbecell, 4, "double", OP_RW));
 
       //    update flow field
 
-      rms = 0.0;
-
-      op_par_loop(update, "update", cells,
-                  op_arg_dat(p_qold, -1, OP_ID, 4, "double", OP_READ),
-                  op_arg_dat(p_q, -1, OP_ID, 4, "double", OP_WRITE),
-                  op_arg_dat(p_res, -1, OP_ID, 4, "double", OP_RW),
-                  op_arg_dat(p_adt, -1, OP_ID, 1, "double", OP_READ),
-                  op_arg_gbl(&rms, 1, "double", OP_INC));
+      // rms = 0.0;
       
       //LOCKSTEP(my_rank, "--------- Res %d after update loop: %f------------- \n", iter, rms)
     
       //GPI_FAIL("stop  plz\n");
-    }
+    // }
 
     // print iteration history
-    rms = sqrt(rms / (double)g_ncell);
-    if (iter % 100 == 0){
-      /*if(isnan(rms) || rms==0)
-        GPI_FAIL("Nan rms\n");*/
+    // rms = sqrt(rms / (double)g_ncell);
+    // if (iter % 100 == 0){
+    //   /*if(isnan(rms) || rms==0)
+    //     GPI_FAIL("Nan rms\n");*/
       
-      op_printf(" %d  %10.5e \n", iter, rms);
-      /*if(isnan(rms)){
-        GPI_FAIL("NAN Output - aborting now...\n");
-				} */
-    }
+    //   op_printf(" %d  %10.5e \n", iter, rms);
+    //   /*if(isnan(rms)){
+    //     GPI_FAIL("NAN Output - aborting now...\n");
+		// 		} */
+    // }
 
-    if (iter % 1000 == 0){
-      op_printf("rms at iter %d = %3.12e", iter, rms);
-      double expected = -1;
-      if (g_ncell == 2880000){
-        expected = 0.0001215707904481;
-      }else if (g_ncell == 720000){
-        expected = 0.0001060114637578; 
-      }else if (g_ncell == 4200000){
-        expected = 0.0001220712679165;
-      }
-      if (expected==-1){
-        printf("\n\nProblem with %d cells has no expected solution\n", g_ncell);
-      }else{
-        double diff = fabs((100.0 * (rms / expected)) - 100.0);
-        op_printf("\n\nTest problem with %d cells is within %3.15E %% of the "
-                  "expected solution\n",
-                  g_ncell, diff);
+    // if (iter % 1000 == 0){
+    //   op_printf("rms at iter %d = %3.12e", iter, rms);
+    //   double expected = -1;
+    //   if (g_ncell == 2880000){
+    //     expected = 0.0001215707904481;
+    //   }else if (g_ncell == 720000){
+    //     expected = 0.0001060114637578; 
+    //   }else if (g_ncell == 4200000){
+    //     expected = 0.0001220712679165;
+    //   }
+    //   if (expected==-1){
+    //     printf("\n\nProblem with %d cells has no expected solution\n", g_ncell);
+    //   }else{
+    //     double diff = fabs((100.0 * (rms / expected)) - 100.0);
+    //     op_printf("\n\nTest problem with %d cells is within %3.15E %% of the "
+    //               "expected solution\n",
+    //               g_ncell, diff);
 
-        if (diff < 0.00001) {
-          op_printf("This test is considered PASSED\n");
-        } else {
-          op_printf("This test is considered FAILED\n");
-        }
-      }
-    }
+    //     if (diff < 0.00001) {
+    //       op_printf("This test is considered PASSED\n");
+    //     } else {
+    //       op_printf("This test is considered FAILED\n");
+    //     }
+    //   }
+    // }
   }
 
   op_timers(&cpu_t2, &wall_t2);
 
   // output the result dat array to files
-  op_print_dat_to_txtfile(p_q, "out_grid_mpi.dat"); // ASCI
-  op_print_dat_to_binfile(p_q, "out_grid_mpi.bin"); // Binary
+  // op_print_dat_to_txtfile(p_q, "out_grid_mpi.dat"); // ASCI
+  // op_print_dat_to_binfile(p_q, "out_grid_mpi.bin"); // Binary
 
   // write given op_dat's indicated segment of data to a memory block in the
   // order it was originally
   // arranged (i.e. before partitioning and reordering)
-  double *q_part = (double *)op_malloc(sizeof(double) * op_get_size(cells) * 4);
-  op_fetch_data_idx(p_q, q_part, 0, op_get_size(cells) - 1);
-  free(q_part);
+  // double *q_part = (double *)op_malloc(sizeof(double) * op_get_size(cells) * 4);
+  // op_fetch_data_idx(p_q, q_part, 0, op_get_size(cells) - 1);
+  // free(q_part);
   printf("\nairfoil_mpi.cpp\n");
 
   op_timing_output();
-	mpi_timing_output();
-	//op_mpi_timing_output();
-	comm_timing_output();
-	
+  mpi_timing_output();
+  comm_timing_output();
+
   op_printf("Max total runtime = %f\n", wall_t2 - wall_t1);
 
   op_exit();

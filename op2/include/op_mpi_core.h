@@ -48,6 +48,11 @@
 #ifndef OP_MPI_CORE_NOMPI
 #include <mpi.h>
 
+
+#ifdef HAVE_GPI
+#include <GASPI.h>
+#endif
+
 /** Define the root MPI process **/
 #ifdef MPI_ROOT
 #undef MPI_ROOT

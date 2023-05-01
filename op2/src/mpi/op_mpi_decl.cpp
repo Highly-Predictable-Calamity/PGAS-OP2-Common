@@ -43,12 +43,25 @@
 #include <op_rt_support.h>
 #include <op_util.h>
 
+#ifdef HAVE_GPI
+#include <GASPI.h>
+#include "../gpi/gpi_utils.h"
+#include <op_gpi_performance.h>
+#include <op_gpi_core.h>
+#include <op_lib_gpi.h>
+#endif
+
 //
 // MPI Communicator for halo creation and exchange
 //
 
 MPI_Comm OP_MPI_WORLD;
 MPI_Comm OP_MPI_GLOBAL;
+
+#ifdef HAVE_GPI
+gaspi_group_t OP_GPI_WORLD;
+gaspi_group_t OP_GPI_GLOBAL;
+#endif
 
 /*
  * Routines called by user code and kernels
@@ -64,19 +77,53 @@ void op_init(int argc, char **argv, int diags) {
   int flag = 0;
   MPI_Initialized(&flag);
   if (!flag) {
-    MPI_Init(&argc, &argv);
+    flag = MPI_Init(&argc, &argv)==MPI_SUCCESS ? 1: 0;
   }
+  
   OP_MPI_WORLD = MPI_COMM_WORLD;
   OP_MPI_GLOBAL = MPI_COMM_WORLD;
+
+#ifdef HAVE_GPI
+  if(!flag){
+    fprintf(stderr, "MPI must be initialised before GPI init.");
+    exit(-1);
+  }
+  
+  MPI_Barrier(OP_MPI_GLOBAL);
+  
+  int ret;
+  if((ret = gaspi_proc_init(GPI_TIMEOUT*10)) != GASPI_SUCCESS){ //TODO check gaspi config - if TCP reduce the timeout multiplier
+    fprintf(stderr, "gaspi_proc_init failed. Use GPI debug variant for more information.\n");
+    fflush(stderr);
+    MPI_Abort(MPI_COMM_WORLD,ret);
+  }
+
+
+  //eeh_size = enh_size = ieh_size = inh_size = (gaspi_size_t) GPI_HEAP_SIZE;
+  
+  OP_GPI_WORLD = GASPI_GROUP_ALL;
+  OP_GPI_GLOBAL= GASPI_GROUP_ALL;
+
+
+  /* Sets up heap segments to be used by temporary dats */
+  op_gpi_setup_segments_heap();
+
+  GPI_SAFE( gaspi_barrier(OP_GPI_GLOBAL,GPI_TIMEOUT) )
+
+#endif
+
   op_init_core(argc, argv, diags);
 }
 
+
+/* Fortran*/
 void op_mpi_init_soa(int argc, char **argv, int diags, MPI_Fint global,
                      MPI_Fint local, int soa) {
   OP_auto_soa = soa;
   op_mpi_init(argc, argv, diags, global, local);
 }
 
+/* Fortran*/
 void op_mpi_init(int argc, char **argv, int diags, MPI_Fint global,
                  MPI_Fint local) {
   int flag = 0;
@@ -88,6 +135,12 @@ void op_mpi_init(int argc, char **argv, int diags, MPI_Fint global,
   }
   OP_MPI_WORLD = MPI_Comm_f2c(local);
   OP_MPI_GLOBAL = MPI_Comm_f2c(global);
+
+#ifdef HAVE_GPI
+  fprintf(stderr, "GPI not initialised here\n");
+  fflush(stdout);
+  MPI_Abort(MPI_COMM_WORLD, 1);
+#endif
 
   op_init_core(argc, argv, diags);
 }
@@ -160,6 +213,14 @@ op_dat op_decl_dat_temp_char(op_set set, int dim, char const *type, int size,
   mpi_buf->r_num_req = 0;
 
   dat->mpi_buffer = mpi_buf;
+
+
+#ifdef HAVE_GPI
+  /* Setup GPI exchange buffers on the dynamic heap */
+  if(op_gpi_buffer_setup(dat, GPI_HEAP_DAT) != 0){
+    GPI_FAIL("Failed to initialise gpi segment data for dat: %s",dat->name)
+  }
+#endif
 
   return dat;
 }
@@ -258,6 +319,10 @@ void op_print(const char *line) {
 
 void op_exit() {
 
+#ifdef HAVE_GPI
+  op_gpi_exit();
+#endif
+  
   op_mpi_exit();
   op_rt_exit();
   op_exit_core();
@@ -315,6 +380,9 @@ void op_timers(double *cpu, double *et) {
 }
 
 void op_timing_output() {
+#ifdef HAVE_GPI
+  op_gpi_timing_output();
+#else
   double max_plan_time = 0.0;
   MPI_Reduce(&OP_plan_time, &max_plan_time, 1, MPI_DOUBLE, MPI_MAX, 0,
              OP_MPI_WORLD);
@@ -322,6 +390,7 @@ void op_timing_output() {
   if (op_is_root())
     printf("Total plan time: %8.4f\n", OP_plan_time);
   mpi_timing_output();
+#endif
 }
 
 void op_timings_to_csv(const char *outputFileName) {
