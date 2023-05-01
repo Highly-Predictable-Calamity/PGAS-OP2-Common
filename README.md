@@ -1,5 +1,7 @@
-# OP2
+# PGAS-OP2
 OP2 is a high-level embedded domain specific language for writing **unstructured mesh** algorithms with automatic parallelisation on multi-core and many-core architectures. The API is embedded in both C/C++ and Fortran.
+
+Additionally, this fork supports a PGAS memory backend using GPI-2. 
 
 This repository contains the implementation of the code translation tools and run-time support libraries, and is structured as follows:
  * `op2`: The C/C++ OP2 run-time libraries and Fortran bindings.
@@ -10,6 +12,8 @@ This repository contains the implementation of the code translation tools and ru
 
 ## Documentation
 Documentation is available on [Read the Docs](https://op2-dsl.readthedocs.io/en/latest/index.html).
+
+Documentation regarding GPI is available in the PGAS-for-OP2 pdf. 
 
 ## Quick-start
 Firstly, OP2 has a varienty of toolchain dependencies that you will likely be able to obtain from your package manager or programming environment:
